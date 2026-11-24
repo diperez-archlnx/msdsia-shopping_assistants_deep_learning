@@ -57,9 +57,11 @@ Usuario `diego.perez@khipu.utec.edu.pe`. Todo está en `~/lab4/`:
 | `~/lab4/run_all.sbatch` | Trabajo de Slurm con la tubería completa |
 | `~/lab4/logs/` | Registros: `install.log`, `prefetch.log`, `lab4_<jobid>.log`, `etapa_<nombre>_<jobid>.log` |
 
-**Estado al cerrar esta sesión:** entorno instalado; ESCI y los cinco modelos de Hugging Face descargados (incluido Qwen3-8B); faltaba terminar la descarga de XTTS-v2. Al terminar, `prefetch.sh` envía solo el trabajo con `sbatch run_all.sbatch`. **Todavía no había ningún trabajo en la cola ni resultados.**
+**Estado al cerrar esta sesión (24 de noviembre, noche):** entorno instalado; ESCI y los seis modelos descargados (22 GB). El **trabajo 65210 está en cola, sin arrancar** (estado `PD`, motivo `Resources`). **Todavía no hay resultados.**
 
-El trabajo pide una porción de A100 de 20 GB, 8 CPU, 48 GB de RAM y 8 horas. Ejecuta las pruebas unitarias y luego cuatro etapas con `tests/run_local.py`: `data`, `retrieval`, `scenarios` y `voice`.
+El trabajo pide una A100 completa (40 GB), 8 CPU, 48 GB de RAM y 8 horas. Ejecuta las pruebas unitarias y luego cuatro etapas con `tests/run_local.py`: `data`, `retrieval`, `scenarios` y `voice`.
+
+Sobre la cola: las GPUs están ocupadas por otros usuarios. La estimación de Slurm para la A100 completa era **como muy tarde las 11:20 del 25 de noviembre**; puede arrancar antes si el trabajo que la ocupa termina pronto. Primero se pidió la porción de 20 GB (trabajo 65203, cancelado), pero su inicio estimado era el 25 por la tarde o después. No se usaron "shards" porque no reservan memoria y la tubería necesita unos 18 GB: podría tumbar trabajos de otros usuarios.
 
 ### Cómo revisar el avance desde otra máquina
 
@@ -85,7 +87,7 @@ Para repetir solo algunas etapas: `LAB4_STAGES="scenarios voice" sbatch --export
 
 ### Problemas previsibles
 
-- **Falta de memoria en la GPU** (la corrida local llegó a 17,8 GB de pico y la porción tiene 20 GB): cambiar en `run_all.sbatch` la línea de la GPU por `#SBATCH --gres=gpu:rtxa6000:1` (48 GB; puede esperar más en la cola).
+- **Si la A100 tarda demasiado**: probar otra GPU con `sbatch --test-only --gres=gpu:rtxa6000:1 run_all.sbatch`, que solo muestra la hora estimada, y cambiar la línea `#SBATCH --gres=` si conviene.
 - **El trabajo queda mucho tiempo en cola**: `squeue -u $USER --start` muestra la hora estimada de inicio.
 - **Khipu corta la conexión** si se abren muchas sesiones SSH seguidas; esperar unos minutos.
 - Los turnos de usuario de esta corrida son **sintéticos**; la referencia de la clonación sí es la voz real.

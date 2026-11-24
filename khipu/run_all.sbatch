@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=lab4-voz
 #SBATCH --partition=gpu
-#SBATCH --gres=gpu:a100_3g.20gb:1
+#SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=48G
 #SBATCH --time=07:59:00
