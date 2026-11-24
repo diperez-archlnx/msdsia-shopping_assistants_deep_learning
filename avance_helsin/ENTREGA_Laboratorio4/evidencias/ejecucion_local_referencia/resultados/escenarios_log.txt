@@ -1,0 +1,383 @@
+﻿W1114 18:27:27.026000 50920 Lib\site-packages\torch\distributed\elastic\multiprocessing\redirects.py:29] NOTE: Redirects are currently not supported in Windows or MacOs.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+⏱ {"etapa": "bm25_fit", "seg": 14.9, "ram_proceso_gb": 0.9, "vocab": 50905, "vram_max_gb": 0.0}
+System.Management.Automation.RemoteException
+✔ embedder: 7.9 s, +0.56 GB VRAM
+⏱ {"etapa": "embeddings", "seg": 0.1, "ram_proceso_gb": 2.15, "vram_max_gb": 0.56}
+System.Management.Automation.RemoteException
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+W1114 18:27:38.595000 50920 Lib\site-packages\torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+✔ reranker: 4.0 s, +1.14 GB VRAM
+System.Management.Automation.RemoteException
+✔ llm: 16.1 s, +6.09 GB VRAM
+━━━━ S01 · Compra que cumple restricciones
+👤 Hola, quiero comprar dos botellas de agua reutilizables y tengo un presupuesto de cuarenta euros.
+🤖 Tienes tres opciones de botellas de agua reutilizable disponibles dentro de tu presupuesto de 40 euros. ¿Te gustaría elegir las primeras dos que encuentro?
+   ops: ['buscar_productos']
+👤 Me quedo con la primera opción, prepárame la cotización.
+🤖 Te resumo la cotización: 2 × HoneyHolly Botella de Agua Acero Inoxidable a 8,99 euros; envío 4,99 euros. Total: 22,97 euros, dentro de tu presupuesto de 40 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+👤 Sí, confirmo el pedido.
+🤖 Tu pedido ha sido confirmado con éxito. El número de pedido es P-D53E9B41. El total es 22,97 euros, que incluye 2 × HoneyHolly Botella de Agua Acero Inoxidable. ¡Gracias por tu compra!
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S01", "seg": 27.5, "ram_proceso_gb": 4.55, "ok": true, "vram_max_gb": 11.02}
+━━━━ S02 · Solicitud ambigua que requiere aclaración
+👤 Necesito un cargador.
+🤖 ¿Qué tipo de cargador necesitas? Por ejemplo, para batería, para móvil, o para coche.
+   ops: ['buscar_productos']
+👤 Es para un móvil con USB C, quiero solo uno. Me vale el primero que me muestres, prepara la cotización.
+🤖 He encontrado un cargador USB C disponible. El producto es: **Cable USB Tipo C [3 Pack 1M]**, marca Yosou, color disponible en varios, precio 12,99 euros. ¿Quieres añadirlo al carrito?
+   ops: ['buscar_productos']
+👤 Sí, confirmo.
+🤖 Te resumo la cotización: 1 × Cable USB Tipo C [3 Pack a 12,99 euros; envío 4,99 euros. Total: 17,98 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+❌ FALLO: ['se esperaban 1 pedidos y hay 0', "'cargador': cantidad 0 != 1"]
+
+⏱ {"etapa": "escenario_S02", "seg": 24.8, "ram_proceso_gb": 4.55, "ok": false, "vram_max_gb": 11.02}
+━━━━ S03 · Cambio de cantidad conservando el presupuesto
+👤 Quiero tres cuadernos y dos bolígrafos, con un máximo de treinta euros. Elige los primeros que encuentres.
+🤖 Te resumo la cotización: 3 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; 2 × Waldmann TANGO línea 925 plata esterlina a 1,49 euros; envío 4,99 euros. Total: 16,94 euros, dentro de tu presupuesto de 30 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'buscar_productos', 'actualizar_carrito', 'actualizar_carrito', 'cotizar']
+👤 Mejor que sean cinco cuadernos en lugar de tres. Prepara la cotización.
+🤖 Te resumo la cotización: 5 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; 2 × Waldmann TANGO línea 925 plata esterlina a 1,49 euros; envío 4,99 euros. Total: 22,92 euros, dentro de tu presupuesto de 30 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+👤 Sí, confirmo.
+🤖 Tu pedido ha sido confirmado con el número P-75FD359B. Has comprado 5 cuadernos Miquelrius a 2,99 euros cada uno y 2 bolígrafos Waldmann a 1,49 euros cada uno. El total es de 22,92 euros, dentro de tu presupuesto de 30 euros. ¡Gracias por tu compra!
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S03", "seg": 49.8, "ram_proceso_gb": 4.55, "ok": true, "vram_max_gb": 13.88}
+━━━━ S04 · Producto agotado con alternativa
+👤 Quiero dos tazas de café, la primera que encuentres está bien.
+🤖 Taza de café encontrada: J.AKSO - Taza de café de cerámica con mango de madera, estilo japonés vintage. Precio: 7,99 euros. Stock: 12 unidades. ¿Quieres añadirla al carrito?
+   ops: ['buscar_productos']
+   [evento externo antes del turno 2: {'pinned': {'taza': 92}, 'forbidden': [], 'hook_applied': False}]
+👤 Prepárame la cotización.
+🤖 Te resumo la cotización: 2 × J.AKSO - Taza de café de a 7,99 euros; envío 4,99 euros. Total: 20,97 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+👤 Vale, cámbiala por la alternativa que me propones y vuelve a cotizar.
+🤖 Te resumo la cotización: 2 × Danolt Taza de café con leche a 7,99 euros; envío 4,99 euros. Total: 20,97 euros. ¿Confirmas el pedido?
+   ops: ['buscar_alternativa', 'reemplazar_en_carrito', 'cotizar']
+👤 Sí, confirmo.
+🤖 Tu pedido está confirmado. ¡Gracias por tu compra! Tu pedido número P-821F9B57 está listo para ser enviado.
+   ops: ['confirmar_pedido']
+❌ FALLO: ['precondición no alcanzada: carrito vacío al aplicar el cambio externo']
+
+⏱ {"etapa": "escenario_S04", "seg": 42.7, "ram_proceso_gb": 4.59, "ok": false, "vram_max_gb": 13.88}
+━━━━ S05 · Producto agotado sin solución
+👤 Quiero una lámpara de escritorio.
+🤖 No hay lámparas de escritorio disponibles en stock. ¿Quieres buscar alternativas?
+   ops: ['buscar_productos']
+👤 Si no hay ninguna disponible, no quiero nada más, gracias.
+🤖 Entendido. Tu carrito se ha vaciado. ¿Necesitas ayuda con algo más?
+   ops: []
+✅ OK
+
+⏱ {"etapa": "escenario_S05", "seg": 9.6, "ram_proceso_gb": 4.59, "ok": true, "vram_max_gb": 13.88}
+━━━━ S06 · Corrección de una transcripción antes de comprar
+👤 Quiero 13 cuadernos, el primero que encuentres, y prepara la cotización.
+🤖 Te resumo la cotización: 13 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; envío 4,99 euros. Total: 43,86 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'actualizar_carrito', 'cotizar']
+👤 Perdona, me he equivocado: son 3 cuadernos, no 13. Corrige la cantidad y vuelve a cotizar.
+🤖 Te resumo la cotización: 3 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; envío 4,99 euros. Total: 13,96 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+👤 Sí, confirmo.
+🤖 Tu pedido está confirmado. ¡Gracias por tu compra! Número de pedido: P-5F0F2924.
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S06", "seg": 29.0, "ram_proceso_gb": 4.59, "ok": true, "vram_max_gb": 13.88}
+━━━━ S07 · Cambio de stock entre cotización y confirmación + confirmación repetida
+👤 Quiero cuatro cables USB C, el primero que encuentres. Prepárame la cotización.
+🤖 Te resumo la cotización: 4 × AmazonBasics - Cable macho de USB a 6,99 euros; envío 4,99 euros. Total: 32,95 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'actualizar_carrito', 'cotizar']
+   [evento externo antes del turno 2: {'pinned': {'cable': 432}, 'reduced': ['B07D7NNJ61'], 'hook_applied': True}]
+👤 Sí, confirmo.
+🤖 El producto AmazonBasics - Cable macho de USB 2.0 no tiene suficiente stock. Solo quedan 2 unidades. ¿Quieres buscar una alternativa o reducir la cantidad?
+   ops: ['confirmar_pedido']
+👤 De acuerdo, entonces pon solo dos unidades y vuelve a cotizar.
+🤖 Te resumo la cotización: 2 × AmazonBasics - Cable macho de USB a 6,99 euros; envío 4,99 euros. Total: 18,97 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+👤 Sí, confirmo.
+🤖 ¡Hecho! Pedido registrado con número P-993AAE59, por un total de 18,97 euros.
+   ops: ['confirmar_pedido']
+👤 Sí, confirmo.
+🤖 Tu pedido ya está registrado. No se realizará ninguna acción adicional.
+   ops: []
+✅ OK
+
+⏱ {"etapa": "escenario_S07", "seg": 38.6, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S08 · Presupuesto excedido y ajuste
+👤 Quiero tres mochilas, máximo treinta euros en total. Las primeras que encuentres.
+🤖 Tres mochilas encontradas:  
+1. **Songwin Mochila táctica** - 24,99 euros  
+2. **Mochila para niñas** - 24,99 euros  
+3. **KROSER Mochila para portátil** - 24,99 euros  
+
+¿Quieres añadir las tres al carrito?
+   ops: ['buscar_productos']
+👤 Entonces solo una. Prepara la cotización.
+🤖 Te resumo la cotización: 1 × Songwin Mochila táctica Macuto de montañismo a 24,99 euros; envío 4,99 euros. Total: 29,98 euros, dentro de tu presupuesto de 30 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+👤 Sí, confirmo.
+🤖 Tu pedido ha sido confirmado con éxito. ¡Gracias por tu compra! Número de pedido: P-FD28C4E3.
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S08", "seg": 26.7, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S09 · Dos productos con presupuesto
+👤 Necesito un ratón inalámbrico y una alfombrilla, una unidad de cada uno, hasta cuarenta euros. Elige los primeros resultados.
+🤖 He encontrado los productos:
+
+1. Ratón inalámbrico Rii - 14,99 euros
+2. Alfombrilla SALUTUY - 7,99 euros
+
+¿Quieres añadirlos al carrito?
+   ops: ['buscar_productos', 'buscar_productos']
+👤 Prepara la cotización.
+🤖 Te resumo la cotización: 1 × Rii Ratón inalámbrico,Ratón inalámbrico Recargable silencios a 14,99 euros; 1 × Alfombrilla de bar, resistente al desgaste, a 7,99 euros; envío 4,99 euros. Total: 27,97 euros, dentro de tu presupuesto de 40 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'actualizar_carrito', 'cotizar']
+👤 Sí, confirmo.
+🤖 Tu pedido ha sido confirmado con éxito. ¡Gracias por tu compra! Número de pedido: P-A92D941B.
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S09", "seg": 29.7, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S10 · Comparación de alternativas sin compra
+👤 Busca auriculares inalámbricos.
+🤖 Aquí tienes los auriculares inalámbricos disponibles:
+
+1. **Raykit** - Plata, 24,99 euros, 10 unidades.
+2. **AOTUYE** - Negro, 24,99 euros, 10 unidades.
+3. **yobola** - Blanco, 19,99 euros, 10 unidades.
+4. **moosen** - Negro, 29,99 euros, 10 unidades.
+5. **HOMSCAM** - Negro, 24,99 euros, 10 unidades.
+
+¿Te gustaría ver más detalles de alguno?
+   ops: ['buscar_productos']
+👤 Compara las dos primeras opciones: ¿cuál es más barata?
+🤖 El auricular más barato es el de **Raykit**, con un precio de 24,99 euros. Ambos están disponibles. ¿Quieres elegir uno de ellos?
+   ops: ['comparar_productos']
+👤 Vale, de momento no compro nada, gracias.
+🤖 De acuerdo, no has decidido aún. Si cambias de opinión, estaré aquí para ayudarte. ¡Hasta pronto!
+   ops: []
+✅ OK
+
+⏱ {"etapa": "escenario_S10", "seg": 23.3, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S11 · Atributo no verificable
+👤 Busca botellas de agua.
+🤖 He encontrado 5 botellas de agua disponibles. ¿Te gustaría ver más detalles de alguna?
+   ops: ['buscar_productos']
+👤 ¿La primera es apta para lavavajillas?
+🤖 La primera botella no menciona si es apta para lavavajillas. ¿Quieres que busque una alternativa con esta característica?
+   ops: ['verificar_atributo']
+✅ OK
+
+⏱ {"etapa": "escenario_S11", "seg": 13.7, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S12 · Cambio de preferencia conservando el presupuesto
+👤 Busco una funda para el móvil de color negro, como mucho veinte euros.
+🤖 Tengo 3 fundas para móvil de color negro o cercano a negro, todas por debajo de 20 euros. ¿Te gustaría ver detalles de alguna?
+   ops: ['buscar_productos']
+👤 Mejor que sea de color azul.
+🤖 Ahora busco fundas para móvil de color azul, por debajo de 20 euros. ¿Te gustaría ver las opciones disponibles?
+   ops: ['registrar_restricciones']
+👤 Vale, la primera, una unidad. Prepara la cotización.
+🤖 La funda protectora para móvil Xiaomi Redmi Note 8 Pro está disponible en color Negro por 9,99 euros. ¿Quieres añadirla al carrito?
+   ops: ['buscar_productos']
+👤 Sí, confirmo.
+🤖 Te resumo la cotización: 1 × Funda Protectora para móvil Xiaomi Redmi a 9,99 euros; envío 4,99 euros. Total: 14,98 euros, dentro de tu presupuesto de 20 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+❌ FALLO: ['se esperaban 1 pedidos y hay 0', "'funda': cantidad 0 != 1"]
+
+⏱ {"etapa": "escenario_S12", "seg": 32.6, "ram_proceso_gb": 4.09, "ok": false, "vram_max_gb": 13.88}
+━━━━ S13 · Orden de compra directa sin confirmación
+👤 Compra ya dos tazas, la primera que encuentres, no hace falta que me preguntes.
+🤖 Te resumo la cotización: 2 × PLTY - We can be Heroes a 7,99 euros; envío 4,99 euros. Total: 20,97 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'actualizar_carrito', 'cotizar']
+👤 Sí, confirmo.
+🤖 Tu pedido está confirmado. ¡Gracias por tu compra! Tu pedido número P-67FBBC92 está listo para ser enviado.
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S13", "seg": 16.8, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S14 · Cancelación tras la cotización
+👤 Quiero dos cuadernos, el primero que encuentres, y prepara la cotización.
+🤖 Te resumo la cotización: 2 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; envío 4,99 euros. Total: 10,97 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'actualizar_carrito', 'cotizar']
+👤 No, mejor cancela, no quiero comprar nada.
+🤖 Entendido. Tu carrito se ha vaciado. ¿Hay algo más que necesites?
+   ops: []
+✅ OK
+
+⏱ {"etapa": "escenario_S14", "seg": 15.9, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S15 · Cantidad mayor que el stock
+👤 Busca cuadernos.
+🤖 He encontrado estos cuadernos:
+
+1. **Miquelrius** - Cuaderno con 1 franja de color, A6, 100 hojas cuadriculadas, papel 90 g, color lavanda. Precio: 2,99 euros. Stock: 3 unidades.
+2. **Calligraphe** - Cuaderno cosido Polypro, 96 páginas, color rojo. Precio: 2,99 euros. Stock: 3 unidades.
+3. **CATTY** - Libreta notas A5, líneas, cubierta kraft, 40 páginas. Precio: 2,99 euros. Stock: 3 unidades.
+4. **Clairefontaine** - Bloque de espiral grandes cuadros, 160 páginas, 21 x 31,8 cm, lote de 2. Precio: 18,99 euros. Stock: 20 unidades.
+5. **Oxford** - Cuaderno de música, modelos/colores aleatorios. Precio: 2,99 euros. Stock: 3 unidades.
+
+¿Te gustaría ver más detalles de alguno?
+   ops: ['buscar_productos']
+👤 Quiero diez unidades del primero.
+🤖 No tengo stock suficiente del primer cuaderno (3 unidades disponibles). ¿Quieres probar con otro producto o reducir la cantidad?
+   ops: ['actualizar_carrito']
+👤 Vale, pon las que haya disponibles y prepara la cotización.
+🤖 Te resumo la cotización: 3 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; envío 4,99 euros. Total: 13,96 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+👤 Sí, confirmo.
+🤖 Tu pedido ha sido confirmado con éxito. ¡Gracias por tu compra! Si necesitas algo más, estaré encantada de ayudarte. Número de pedido: P-0CBD9F6C.
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S15", "seg": 43.9, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S16 · Eliminar un producto del carrito
+👤 Añade al carrito una taza y un cuaderno, los primeros que encuentres.
+🤖 Te resumo la cotización: 1 × PLTY - We can be Heroes a 7,99 euros; 1 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; envío 4,99 euros. Total: 15,97 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'buscar_productos', 'actualizar_carrito', 'actualizar_carrito', 'cotizar']
+👤 Quita la taza, solo quiero el cuaderno. Prepara la cotización.
+🤖 Te resumo la cotización: 1 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; envío 4,99 euros. Total: 7,98 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+👤 Sí, confirmo.
+🤖 Tu pedido ha sido confirmado. ¡Gracias por tu compra! Tu pedido número P-94DD679B está listo para ser enviado.
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S16", "seg": 29.6, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S17 · Cambio de precio entre cotización y confirmación
+👤 Quiero un ratón inalámbrico, el primero que encuentres, mi presupuesto es treinta euros. Prepara la cotización.
+🤖 Te resumo la cotización: 1 × Rii Ratón inalámbrico,Ratón inalámbrico Recargable silencios a 14,99 euros; envío 4,99 euros. Total: 19,98 euros, dentro de tu presupuesto de 30 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'actualizar_carrito', 'cotizar']
+   [evento externo antes del turno 2: {'pinned': {'raton': 35}, 'hook_applied': True}]
+👤 Sí, confirmo.
+🤖 El precio del ratón inalámbrico cambió a 19,49 euros desde la cotización. ¿Quieres continuar con la compra al nuevo precio o buscar una alternativa?
+   ops: ['confirmar_pedido']
+👤 Vale, acepto el nuevo precio. Vuelve a cotizar.
+🤖 Te resumo la cotización: 1 × Rii Ratón inalámbrico,Ratón inalámbrico Recargable silencios a 19,49 euros; envío 4,99 euros. Total: 24,48 euros, dentro de tu presupuesto de 30 euros. ¿Confirmas el pedido?
+   ops: ['cotizar']
+👤 Sí, confirmo.
+🤖 ¡Hecho! Pedido registrado con número P-5E843BFD, por un total de 24,48 euros.
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S17", "seg": 31.9, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S18 · Cantidad fuera de rango
+👤 Quiero cincuenta botellas de agua, la primera que encuentres.
+🤖 La botella de agua "Botella de Agua Acero Inoxidable-500ml/750ml,Aislada al Vacío" está disponible en color rosa y tiene un precio de 8,99 euros. ¿Quieres añadir 50 unidades al carrito?
+   ops: ['buscar_productos']
+✅ OK
+
+⏱ {"etapa": "escenario_S18", "seg": 10.4, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S19 · Referencia sin contexto previo
+👤 Añade el segundo al carrito.
+🤖 No puedo añadir el segundo producto porque no has especificado cuál es el producto que quieres añadir. ¿Puedes decirme el nombre del producto o su ID?
+   ops: []
+✅ OK
+
+⏱ {"etapa": "escenario_S19", "seg": 3.3, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S20 · Memoria del presupuesto durante varios turnos
+👤 Mi presupuesto total es de veinticinco euros.
+🤖 Tu presupuesto total es de 25,00 euros. ¿Qué necesitas comprar?
+   ops: ['registrar_restricciones']
+👤 Busca tazas.
+🤖 He encontrado 3 tazas disponibles dentro de tu presupuesto:
+
+1. **PLTY - We can be Heroes Taza** - 6,99 euros
+2. **PLTY - N Taza** - 6,99 euros
+3. **Bohemia Lyra Taza** - 6,99 euros
+
+¿Cuántas tazas quieres y de qué tipo?
+   ops: ['buscar_productos']
+👤 Añade dos de la primera.
+🤖 Te resumo la cotización: 2 × PLTY - We can be Heroes a 6,99 euros; envío 4,99 euros. Total: 18,97 euros, dentro de tu presupuesto de 25 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+👤 Añade también un cuaderno, el primero que encuentres, y prepara la cotización.
+🤖 Te resumo la cotización: 2 × PLTY - We can be Heroes a 6,99 euros; 1 × Miquelrius - Cuaderno Notebook Messages, 1 a 3,99 euros; envío 4,99 euros. Total: 22,96 euros, dentro de tu presupuesto de 25 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'actualizar_carrito', 'actualizar_carrito', 'cotizar']
+👤 Sí, confirmo.
+🤖 Tu pedido ha sido confirmado con el número P-A7DDC3F6. Has comprado 2 × PLTY - We can be Heroes y 1 × Miquelrius - Cuaderno Notebook Messages. El total es de 22,96 euros. ¡Gracias por tu compra!
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S20", "seg": 62.5, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S21 · Confirmación repetida sin duplicar
+👤 Quiero una botella de agua, la primera que encuentres. Prepara la cotización.
+🤖 La botella de agua "Botella de Agua Acero Inoxidable-500ml/750ml,Aislada al Vacío" está disponible en color rosa por 8,99 euros. ¿Quieres añadirla al carrito?
+   ops: ['buscar_productos']
+👤 Sí, confirmo.
+🤖 Te resumo la cotización: 1 × Botella de Agua Acero Inoxidable-500ml/750ml,Aislada al a 8,99 euros; envío 4,99 euros. Total: 13,98 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+👤 Confirmo otra vez, por si acaso.
+🤖 ¡Hecho! Pedido registrado con número P-4DBF749C, por un total de 13,98 euros.
+   ops: ['confirmar_pedido']
+✅ OK
+
+⏱ {"etapa": "escenario_S21", "seg": 22.9, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+━━━━ S22 · Filtro de precio máximo unitario
+👤 Busca auriculares de menos de veinte euros.
+🤖 Tengo 5 auriculares de menos de 20 euros. ¿Te gustaría ver detalles de alguno?
+   ops: ['buscar_productos']
+✅ OK
+
+⏱ {"etapa": "escenario_S22", "seg": 7.8, "ram_proceso_gb": 4.08, "ok": true, "vram_max_gb": 13.88}
+⏱ {"etapa": "escenarios_texto", "seg": 592.9, "ram_proceso_gb": 4.08, "vram_max_gb": 13.88}
+     id                                                                escenario     categoría ok  turnos  operaciones                                                                 fallos incumplimientos
+0   S01                                          Compra que cumple restricciones        compra  ✅       3            4                                                                                       
+1   S02                                Solicitud ambigua que requiere aclaración    aclaracion  ❌       3            4            se esperaban 1 pedidos y hay 0; 'cargador': cantidad 0 != 1                
+2   S03                            Cambio de cantidad conservando el presupuesto        cambio  ✅       3            8                                                                                       
+3   S04                                         Producto agotado con alternativa       agotado  ❌       4            7  precondición no alcanzada: carrito vacío al aplicar el cambio externo                
+4   S05                                            Producto agotado sin solución       agotado  ✅       2            1                                                                                       
+5   S06                         Corrección de una transcripción antes de comprar    correccion  ✅       3            6                                                                                       
+6   S07  Cambio de stock entre cotización y confirmación + confirmación repetida         stock  ✅       5            7                                                                                       
+7   S08                                            Presupuesto excedido y ajuste   presupuesto  ✅       3            4                                                                                       
+8   S09                                            Dos productos con presupuesto        compra  ✅       3            6                                                                                       
+9   S10                                   Comparación de alternativas sin compra   comparacion  ✅       3            2                                                                                       
+10  S11                                                  Atributo no verificable     atributos  ✅       2            2                                                                                       
+11  S12                         Cambio de preferencia conservando el presupuesto        cambio  ❌       4            5               se esperaban 1 pedidos y hay 0; 'funda': cantidad 0 != 1                
+12  S13                                 Orden de compra directa sin confirmación  confirmacion  ✅       2            4                                                                                       
+13  S14                                           Cancelación tras la cotización  confirmacion  ✅       2            3                                                                                       
+14  S15                                              Cantidad mayor que el stock         stock  ✅       4            5                                                                                       
+15  S16                                         Eliminar un producto del carrito        cambio  ✅       3            8                                                                                       
+16  S17                         Cambio de precio entre cotización y confirmación         stock  ✅       4            6                                                                                       
+17  S18                                                  Cantidad fuera de rango    validacion  ✅       1            1                                                                                       
+18  S19                                           Referencia sin contexto previo    aclaracion  ✅       1            0                                                                                       
+19  S20                            Memoria del presupuesto durante varios turnos       memoria  ✅       5            9                                                                                       
+20  S21                                       Confirmación repetida sin duplicar  confirmacion  ✅       3            4                                                                                       
+21  S22                                         Filtro de precio máximo unitario      busqueda  ✅       1            1                                                                                       
+{
+ "escenarios": 22,
+ "completados_ok": 19,
+ "porcentaje_ok": 86.4,
+ "incumplimientos_totales": 0,
+ "incumplimientos_por_tipo": {}
+}
+⏱ {"etapa": "ablacion_guardas", "seg": 557.9, "ram_proceso_gb": 4.08, "vram_max_gb": 13.88}
+     id                                                                escenario     categoría ok  turnos  operaciones                                                                                                                          fallos incumplimientos
+0   S01                                          Compra que cumple restricciones        compra  ✅       3            4                                                                                                                                                
+1   S02                                Solicitud ambigua que requiere aclaración    aclaracion  ❌       3            4                                                                     se esperaban 1 pedidos y hay 0; 'cargador': cantidad 0 != 1                
+2   S03                            Cambio de cantidad conservando el presupuesto        cambio  ❌       3            5                                                                          'boligrafo': cantidad 0 != 2; se perdió el presupuesto                
+3   S04                                         Producto agotado con alternativa       agotado  ❌       4            6  precondición no alcanzada: carrito vacío al aplicar el cambio externo; se esperaban 1 pedidos y hay 0; 'taza': cantidad 0 != 2                
+4   S05                                            Producto agotado sin solución       agotado  ✅       2            1                                                                                                                                                
+5   S06                         Corrección de una transcripción antes de comprar    correccion  ❌       3            4                                                                     se esperaban 1 pedidos y hay 0; 'cuaderno': cantidad 0 != 3                
+6   S07  Cambio de stock entre cotización y confirmación + confirmación repetida         stock  ❌       5            6                                                                        se esperaban 1 pedidos y hay 0; 'cable': cantidad 0 != 2                
+7   S08                                            Presupuesto excedido y ajuste   presupuesto  ✅       3            4                                                                                                                                                
+8   S09                                            Dos productos con presupuesto        compra  ❌       3            4                                        se esperaban 1 pedidos y hay 0; 'raton': cantidad 0 != 1; 'alfombrilla': cantidad 0 != 1                
+9   S10                                   Comparación de alternativas sin compra   comparacion  ✅       3            2                                                                                                                                                
+10  S11                                                  Atributo no verificable     atributos  ✅       2            2                                                                                                                                                
+11  S12                         Cambio de preferencia conservando el presupuesto        cambio  ❌       4            5                                                    la preferencia de color no se actualizó en memoria; se perdió el presupuesto                
+12  S13                                 Orden de compra directa sin confirmación  confirmacion  ❌       2            3                                                                         se esperaban 1 pedidos y hay 0; 'taza': cantidad 0 != 2                
+13  S14                                           Cancelación tras la cotización  confirmacion  ✅       2            3                                                                                                                                                
+14  S15                                              Cantidad mayor que el stock         stock  ✅       4            5                                                                                                                                                
+15  S16                                         Eliminar un producto del carrito        cambio  ✅       3            7                                                                                                                                                
+16  S17                         Cambio de precio entre cotización y confirmación         stock  ❌       4            4                           turno 2: no se detectó el error precio_modificado en confirmar_pedido; se esperaban 1 pedidos y hay 0                
+17  S18                                                  Cantidad fuera de rango    validacion  ✅       1            2                                                                                                                                                
+18  S19                                           Referencia sin contexto previo    aclaracion  ✅       1            0                                                                                                                                                
+19  S20                            Memoria del presupuesto durante varios turnos       memoria  ❌       5            5                                            se esperaban 1 pedidos y hay 0; 'taza': cantidad 0 != 2; 'cuaderno': cantidad 0 != 1                
+20  S21                                       Confirmación repetida sin duplicar  confirmacion  ❌       3            3                                                                      se esperaban 1 pedidos y hay 0; 'botella': cantidad 0 != 1                
+21  S22                                         Filtro de precio máximo unitario      busqueda  ✅       1            1                                                                                                                                                
+ABLACIÓN: {"escenarios": 22, "completados_ok": 11, "porcentaje_ok": 50.0, "incumplimientos_totales": 0, "incumplimientos_por_tipo": {}}

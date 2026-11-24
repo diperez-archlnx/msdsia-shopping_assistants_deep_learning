@@ -1,0 +1,8 @@
+# Preinstalados en Colab: torch, torchaudio, transformers, numpy, pandas, scipy, pyarrow, nltk, librosa, soundfile, matplotlib
+coqui-tts[codec]>=0.28   # torchcodec: requerido por torch>=2.9 para leer audio (necesita FFmpeg)
+six
+sentence-transformers>=4.0
+transformers>=4.57
+bitsandbytes>=0.45
+accelerate
+tabulate

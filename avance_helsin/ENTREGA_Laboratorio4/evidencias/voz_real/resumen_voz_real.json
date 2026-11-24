@@ -1,0 +1,19 @@
+{
+ "fuente": "C:\\Users\\DELL\\Downloads\\Calle Huantajaya.m4a",
+ "duracion_s": 24.34,
+ "volumen_medio_db": -22.0,
+ "volumen_pico_db": -2.1,
+ "transcripcion_referencia": "Hola, soy integrante del grupo de Laboratorio 4 de Aprendizaje Profundo. Esta grabación se usa únicamente como referencia para clonar mi voz con fines académicos. Leo este párrafo con calma en un lugar silencioso para que el modelo capture bien el timbre, el ritmo y la entonación de mi forma de hablar.",
+ "wer_vs_parrafo_esperado": 0.019,
+ "carga_xtts_s": 21.3,
+ "tts_segundos_media": 7.44,
+ "inteligibilidad_wer_media": 0.358,
+ "inteligibilidad_wer_mediana": 0.384,
+ "similitud_media": 0.936,
+ "similitud_min": 0.903,
+ "solapamiento_trigramas_max": 0.0,
+ "cotas": {
+  "ref_mitad_vs_mitad (cota sup.)": 0.991,
+  "otra_voz_vs_ref (cota inf.)": 0.84
+ }
+}

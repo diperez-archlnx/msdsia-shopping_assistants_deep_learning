@@ -1,0 +1,11 @@
+sistema,modo,Δ vs BM25,IC95,p
+Denso e5,candidates,0.032931737458823745,"[+0.011, +0.054]",0.0012
+Denso e5,catalog,-0.027165857191805153,"[-0.058, +0.005]",0.9514
+Híbrido RRF (sin re-ranker),candidates,0.033099698611045454,"[+0.017, +0.049]",0.0002
+Híbrido RRF (sin re-ranker),catalog,0.02483754206332143,"[+0.005, +0.045]",0.0092
+Denso + re-ranker (sin BM25),candidates,0.08072085727268864,"[+0.059, +0.103]",0.0
+Denso + re-ranker (sin BM25),catalog,0.061212398070558165,"[+0.034, +0.090]",0.0
+BM25 + re-ranker (sin denso),candidates,0.080853481672735,"[+0.059, +0.103]",0.0
+BM25 + re-ranker (sin denso),catalog,0.07324650417546526,"[+0.052, +0.095]",0.0
+Sistema completo (RRF + re-ranker),candidates,0.08069636463847646,"[+0.059, +0.103]",0.0
+Sistema completo (RRF + re-ranker),catalog,0.0926243047341203,"[+0.068, +0.118]",0.0

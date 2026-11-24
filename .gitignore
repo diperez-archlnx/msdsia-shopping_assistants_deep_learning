@@ -1,0 +1,27 @@
+# Credenciales: nunca al repositorio
+access_khipu*.txt
+.env
+*.pem
+id_*
+
+# Datos, modelos e indices (se descargan o regeneran con el codigo)
+**/work/raw/
+**/work/data/
+**/work/index/
+**/work/store/
+**/work/results/
+**/work_local/
+hf_cache/
+tts_cache/
+*.parquet
+*.npy
+*.db
+
+# Python y editores
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+.claude/
+.vscode/

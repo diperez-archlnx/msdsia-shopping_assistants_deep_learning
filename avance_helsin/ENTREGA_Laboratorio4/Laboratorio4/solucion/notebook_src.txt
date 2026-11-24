@@ -1,0 +1,548 @@
+# %% [markdown]
+# # Laboratorio 4 — Asistente de compras por voz
+# **Curso de Deep Learning · Maestría 2026**
+#
+# Asistente que recibe consultas **habladas en español**, las transcribe (ASR), razona con un **LLM local con herramientas** sobre un catálogo indexado con **RAG híbrido** (Amazon ESCI, locale `es`), opera sobre una **tienda simulada** (precios, stock, carrito, cotizaciones y pedidos) y responde **por voz con clonación** a partir de una grabación de referencia.
+#
+# ```
+#  🎙️ audio usuario
+#     │  (fin de grabación = t0 de latencia)
+#     ▼
+#  ┌──────────────┐   texto    ┌──────────────────────────────────────────────┐
+#  │ ASR Whisper  │──────────► │ AGENTE (Qwen3-8B 4-bit, tool-calling)         │
+#  │ large-v3-turbo│ (revisión │  • memoria estructurada (presupuesto, cantidades,│
+#  └──────────────┘ /corrección)│    preferencias, últimos resultados, cotización)│
+#                              │  • guardas en código (confirmación, stock,      │
+#                              │    presupuesto, idempotencia)                   │
+#                              └───────┬──────────────────────────┬───────────┘
+#                                      │ herramientas             │ respuesta
+#               ┌──────────────────────┴───────────┐              ▼
+#               │ RAG: BM25 propio + e5 denso → RRF │      ┌──────────────┐
+#               │      → cross-encoder bge-m3       │      │ TTS XTTS-v2  │──► 🔊
+#               │ TIENDA: SQLite transaccional      │      │ voz clonada  │
+#               └───────────────────────────────────┘      └──────────────┘
+# ```
+#
+# **Índice**
+# 0. Configuración del entorno en Colab
+# 1. Preparación de datos (catálogo ≥ 5 000 productos, ≥ 200 consultas, qrels)
+# 2. Índices y recuperación (BM25 base, denso, híbrido, re-ranker)
+# 3. Evaluación de recuperación: modelo base léxico, sistema propuesto y ablación
+# 4. Tienda simulada: generación con semilla y restauración
+# 5. LLM y agente: herramientas, memoria y validaciones
+# 6. 22 escenarios operativos (texto)
+# 7. Voz: grabación de referencia, ASR y TTS con clonación
+# 8. 6 escenarios por voz + repetición con transcripción correcta
+# 9. Calidad de la voz sintetizada (inteligibilidad y semejanza)
+# 10. Latencia por etapa (carga inicial vs consultas)
+# 11. Análisis de aciertos, fallos y limitaciones · Informe automático
+# 12. Demostración en vivo (para el video)
+
+# %% [markdown]
+# ## 0. Configuración del entorno
+#
+# **Requisitos**: `Entorno de ejecución → Cambiar tipo de entorno → GPU T4` (15 GB VRAM, ~12.7 GB RAM).
+#
+# **Estructura esperada en Google Drive** (subir la carpeta `solucion/` entregada):
+# ```
+# MyDrive/Laboratorio4/solucion/
+#     Laboratorio4_Asistente_Voz.ipynb   ← este notebook
+#     lab4/                              ← paquete Python (scripts)
+#     README.md
+# ```
+# Los datos, índices, audios y resultados se guardan en `MyDrive/Laboratorio4/work/` para no repetir la preparación ni perder las grabaciones al reiniciar la sesión.
+#
+# | Componente | Modelo | Tamaño en GPU | Motivo de la elección |
+# |---|---|---|---|
+# | ASR | `openai/whisper-large-v3-turbo` (fp16) | ~1.6 GB | Mejor WER multilingüe abierto; decodificador de 4 capas → ~6× más rápido que large-v3 |
+# | Embeddings | `intfloat/multilingual-e5-base` (fp16) | ~0.6 GB | Recuperación multilingüe fuerte (MTEB) con coste bajo para 15k fichas |
+# | Re-ranker | `BAAI/bge-reranker-v2-m3` (fp16) | ~1.1 GB | Cross-encoder multilingüe estado del arte, 568M |
+# | LLM | `Qwen/Qwen3-8B` NF4 4-bit (modo sin razonamiento) | ~6 GB | Buen español y *tool-calling* nativo; 4 bits para convivir con el resto |
+# | TTS | `xtts_v2` (Coqui) | ~2 GB | Español + clonación *zero-shot* con 6-30 s de referencia |
+# | Verificación de hablante | `microsoft/wavlm-base-plus-sv` | ~0.4 GB | x-vectors para medir semejanza de voz |
+#
+# Todo se ejecuta **localmente en Colab**; solo se descargan pesos y datos (sin APIs de inferencia externas).
+
+# %%
+!nvidia-smi --query-gpu=name,memory.total --format=csv
+!pip install -q "coqui-tts[codec]>=0.28" six "sentence-transformers>=4.0" "transformers>=4.57" "bitsandbytes>=0.45" accelerate tabulate
+!apt-get -qq install -y ffmpeg > /dev/null
+# Si pip actualizó torch/transformers ya importados, reinicie la sesión (Entorno de ejecución → Reiniciar) y continúe.
+!pip list 2>/dev/null | grep -iE "^(torch|transformers|sentence-transformers|coqui-tts|bitsandbytes) "
+
+# %%
+import os, sys, json, time, platform
+from pathlib import Path
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+SOL_DIR = Path('/content/drive/MyDrive/Laboratorio4/solucion')   # ← ajustar si se usa otra ruta
+WORK_DIR = Path('/content/drive/MyDrive/Laboratorio4/work')
+os.environ['LAB4_BASE'] = str(WORK_DIR)
+os.environ['COQUI_TOS_AGREED'] = '1'
+os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+sys.path.insert(0, str(SOL_DIR))
+
+import importlib, torch, transformers, sentence_transformers, numpy as np, pandas as pd
+import lab4
+from lab4 import config as C
+C.ensure_dirs()
+
+versions = {"python": platform.python_version(), "torch": torch.__version__, "cuda": torch.version.cuda,
+            "transformers": transformers.__version__, "sentence_transformers": sentence_transformers.__version__,
+            "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None}
+try:
+    import TTS; versions["coqui_tts"] = TTS.__version__
+except Exception as e:
+    versions["coqui_tts"] = f"no importado ({e})"
+print(json.dumps(versions, indent=2))
+print("Modelos:", C.MODELS)
+(C.RESULTS_DIR / "versiones.json").write_text(json.dumps({**versions, "modelos": C.MODELS.__dict__}, indent=2))
+
+# %% [markdown]
+# ## 1. Preparación de datos
+#
+# * Fuente: Amazon Shopping Queries Dataset (ESCI), **versión reducida** (`small_version == 1`) filtrada por `product_locale == "es"`.
+# * Los `.parquet` del zip entregado son punteros de Git LFS (≈130 bytes); se descargan los ficheros reales del repositorio oficial (~51 MB ejemplos, ~1.1 GB productos). Los productos se leen **filtrando `es` en la lectura** (filtro de pyarrow) para no saturar la RAM.
+# * **Consultas**: 150 de `split=train` (**desarrollo**: ajuste de hiperparámetros) y 250 de `split=test` (**evaluación**); separadas por `query_id`. Se exigen ≥ 8 candidatos y ≥ 1 *Exact* por consulta.
+# * **Catálogo**: todos los productos anotados de esas 400 consultas + distractores reales del locale `es` hasta **15 000 productos**, con título, descripción, *bullet points*, marca, color e id. Se garantiza que haya productos de los tipos usados en los escenarios.
+# * **Las etiquetas ESCI** se guardan en `qrels.parquet`, separadas del catálogo: el índice y el agente nunca las leen.
+
+# %%
+from lab4 import data
+data.download_esci()
+catalog, queries, qrels = data.prepare_data()
+print(catalog.shape, queries.split.value_counts().to_dict(), qrels.esci_label.value_counts().to_dict())
+display(queries.head())
+display(catalog[["product_id", "title", "brand", "color"]].head())
+
+# %%
+# Comprobaciones de la preparación (requisitos del enunciado)
+assert len(catalog) >= 5000
+assert (queries.split == "test").sum() + (queries.split == "dev").sum() >= 200
+assert set(qrels.product_id) <= set(catalog.product_id), "Todos los candidatos anotados deben estar en el catálogo"
+assert set(queries[queries.split == "dev"].query_id).isdisjoint(set(queries[queries.split == "test"].query_id))
+assert not {"esci_label", "gain"} & set(catalog.columns), "El catálogo no debe contener etiquetas"
+print("✔ Catálogo:", len(catalog), "| consultas dev/test:", (queries.split == "dev").sum(), (queries.split == "test").sum())
+print("Fichas con descripción:", f"{(catalog.description != '').mean():.0%}",
+      "| con bullets:", f"{(catalog.bullets != '').mean():.0%}", "| con marca:", f"{(catalog.brand != '').mean():.0%}",
+      "| con color:", f"{(catalog.color != '').mean():.0%}")
+
+# %% [markdown]
+# ## 2. Índices y recuperación
+#
+# * **BM25 (modelo base léxico)**: implementación propia con `scipy.sparse` — tokenización sin acentos, *stopwords* y *stemming* Snowball español; el título se duplica (*field boosting*). Los pesos BM25 se precalculan por (documento, término) para que cada consulta sea una suma dispersa.
+# * **Denso**: `multilingual-e5-base` con prefijos `query:`/`passage:`; embeddings normalizados y cacheados en Drive.
+# * **Fusión**: *Reciprocal Rank Fusion* ponderada (no requiere calibrar escalas de puntuación).
+# * **Re-ranker**: cross-encoder sobre los `rerank_depth` primeros.
+# * **Filtros de negocio** (precio máximo, solo disponibles) se aplican **antes** del re-ranking para no gastar el cross-encoder en productos no válidos.
+
+# %%
+from lab4.retrieval import BM25Index, DenseIndex, Reranker, HybridSearcher
+from lab4.pipeline import ModelRegistry, gpu_mem
+reg = ModelRegistry()
+
+t0 = time.perf_counter()
+bm25 = BM25Index(C.RETRIEVAL.bm25_k1, C.RETRIEVAL.bm25_b).fit(catalog.title.tolist(), catalog.passage.tolist())
+print(f"BM25: {bm25.n_docs} docs, vocabulario {len(bm25.vocab):,}, {time.perf_counter()-t0:.1f} s")
+
+dense = reg.load("embedder", lambda: DenseIndex())
+t0 = time.perf_counter()
+dense.fit(catalog.passage.tolist(), cache_path=C.INDEX_DIR / "e5_base_passages.npy")
+print(f"Embeddings {dense.emb.shape} en {time.perf_counter()-t0:.1f} s")
+reranker = reg.load("reranker", lambda: Reranker())
+searcher = HybridSearcher(catalog, bm25, dense, reranker, C.RETRIEVAL)
+
+for h in searcher.search("auriculares bluetooth para correr", k=5):
+    print(f"{h.score:7.3f}  {h.product_id}  {catalog.loc[h.idx, 'title'][:80]}")
+
+# %% [markdown]
+# ## 3. Evaluación de la recuperación
+#
+# **Protocolo**: nDCG@10 con ganancias E = 1, S = 0,1, C = 0,01, I = 0 sobre los **candidatos anotados** de cada consulta (protocolo ESCI Task 1), y adicionalmente sobre el **catálogo completo** (los productos no anotados cuentan como 0; es la situación real del agente).
+#
+# **Ajuste** solo con consultas de desarrollo (`dev` ← `split=train`): peso de BM25 en la fusión, `k` de RRF y profundidad del re-ranker. Las consultas de test **no** se usan para ajustar nada.
+
+# %%
+from dataclasses import replace
+from lab4 import evaluation as E
+ev = E.RetrievalEvaluator(searcher, queries, qrels)
+best_cfg, grid_dev, depth_dev = ev.tune_on_dev(C.RETRIEVAL)
+display(grid_dev.head(8)); display(depth_dev)
+print("Configuración elegida en dev:", best_cfg)
+searcher.cfg = best_cfg
+
+# %%
+sys_df, sig_df, per_q = ev.compare_systems(best_cfg, split="test")
+display(sys_df.pivot(index="sistema", columns="modo", values="nDCG@10").loc[list(E.SYSTEMS)].round(4))
+display(sig_df.round(4))
+fig = E.plot_systems(sys_df, C.RESULTS_DIR / "ndcg_sistemas.png")
+sys_df.to_csv(C.RESULTS_DIR / "recuperacion_test.csv", index=False)
+
+# %% [markdown]
+# **Lectura de la tabla**
+# * *Modelo base*: **BM25 (base léxica)**.
+# * *Ablación del re-ranker* (componente principal): **Sistema completo** vs **Híbrido RRF (sin re-ranker)**, mismas consultas de test.
+# * *Ablaciones adicionales de la fusión*: quitar BM25 (**Denso + re-ranker**) o quitar el denso (**BM25 + re-ranker**).
+# * La columna IC95 es un *bootstrap* pareado por consulta de la diferencia frente a BM25 (si el intervalo no cruza 0 la mejora es robusta).
+
+# %%
+lat_ret = {}
+for name, (ub, ud, ur) in [("BM25", (True, False, False)), ("Híbrido", (True, True, False)), ("Completo", (True, True, True))]:
+    lat_ret[name] = ev.latency_table(replace(best_cfg, use_bm25=ub, use_dense=ud, use_reranker=ur))
+    print(name); display(lat_ret[name])
+searcher.cfg = best_cfg   # restaurar la configuración del agente
+
+# %%
+# Cinco aciertos y cinco fallos (sistema completo, test, candidatos anotados)
+err_df = E.error_analysis(ev, best_cfg, "test", "candidates", n=5)
+pd.set_option("display.max_colwidth", 200)
+display(err_df)
+err_df.to_csv(C.RESULTS_DIR / "aciertos_fallos_recuperacion.csv", index=False)
+
+# %% [markdown]
+# ## 4. Tienda simulada
+#
+# * Precio y stock de cada producto se derivan de `sha256(semilla:product_id)` → **deterministas** e independientes del orden del catálogo (≈8 % agotados, precios log-normales con mediana ≈ 22 €).
+# * SQLite con restricciones `CHECK (stock >= 0)`, `UNIQUE(quote_id)` en pedidos (idempotencia) e importes en **céntimos enteros**.
+# * `snapshot("base")` / `restore("base")` fijan el estado inicial de cada escenario.
+
+# %%
+from lab4.store import Store
+import hashlib
+store = Store(C.STORE_DIR / "store.db")
+store.reset(catalog.product_id.tolist(), seed=C.SEED)
+store.snapshot("base")
+
+def inventory_hash():
+    rows = store.con.execute("SELECT product_id, price_cents, stock FROM inventory ORDER BY product_id").fetchall()
+    return hashlib.md5(json.dumps([tuple(r) for r in rows]).encode()).hexdigest()
+
+h0 = inventory_hash()
+pid = catalog.product_id.iloc[0]
+store.set_stock(pid, 999); store.set_price(pid, 1.23)
+assert inventory_hash() != h0
+store.restore("base")
+assert inventory_hash() == h0
+store2 = Store(C.STORE_DIR / "store_check.db"); store2.reset(catalog.product_id.tolist(), seed=C.SEED)
+rows2 = store2.con.execute("SELECT product_id, price_cents, stock FROM inventory ORDER BY product_id").fetchall()
+assert hashlib.md5(json.dumps([tuple(r) for r in rows2]).encode()).hexdigest() == h0
+print("✔ La tienda es reproducible (misma semilla ⇒ mismo inventario) y restaurable. Hash:", h0)
+inv = pd.read_sql("SELECT * FROM inventory", store.con)
+print(inv.describe().round(2))
+
+# %%
+# Prueba unitaria de atomicidad e idempotencia (sin LLM)
+from lab4.store import StoreError
+store.restore("base")
+in_stock = inv[inv.stock >= 5].product_id.tolist()[:2]
+store.set_stock(in_stock[0], 5); store.set_stock(in_stock[1], 5)
+store.set_cart_qty("test", in_stock[0], 2); store.set_cart_qty("test", in_stock[1], 3)
+q = store.create_quote("test")
+store.set_stock(in_stock[1], 1)                       # otro cliente compra antes de confirmar
+try:
+    store.confirm_order("test", q["quote_id"])
+except StoreError as e:
+    print("Rechazado como se esperaba:", e.code, e.data)
+assert store.get(in_stock[0])["stock"] == 5, "no debe haber cambios parciales"
+assert store.orders("test") == []
+store.set_stock(in_stock[1], 5)
+q = store.create_quote("test")
+r1 = store.confirm_order("test", q["quote_id"]); r2 = store.confirm_order("test", q["quote_id"])
+assert r2["duplicate"] and r1["order_id"] == r2["order_id"] and len(store.orders("test")) == 1
+assert store.get(in_stock[0])["stock"] == 3 and store.get(in_stock[1])["stock"] == 2
+print("✔ Sin cambios parciales; confirmación repetida no duplica:", r1["order_id"], store.integrity_report())
+store.restore("base")
+
+# %% [markdown]
+# ## 5. LLM y agente
+#
+# **Control del agente** (implementado por el grupo, `lab4/agent.py`, `lab4/tools.py`):
+# 1. *Reglas deterministas* sobre el mensaje: confirmación explícita (`sí, confirmo…` sin negaciones) y presupuesto (`máximo 30 euros`).
+# 2. *Bucle ReAct* (≤ 6 pasos/turno): el LLM elige herramientas con el formato nativo `<tool_call>` de Qwen; el código las **valida y ejecuta**.
+# 3. *Memoria estructurada* (`ConversationState`): presupuesto, preferencias, últimos resultados numerados, productos mostrados, cotización pendiente, pedidos. Se inyecta como JSON en cada paso → no depende de que el historial textual quepa en contexto.
+# 4. *Guardas en código*: no se añade un producto que no se haya mostrado (anti-alucinación de ids), cantidad entera 1-20, stock disponible, aviso de presupuesto, `confirmar_pedido` solo si (a) hay cotización vigente, (b) se mostró en un turno **anterior**, (c) el usuario confirmó **en este turno**; cualquier cambio del carrito invalida la cotización.
+# 5. *Post-validación*: si la respuesta afirma un pedido que no existe, se reemplaza; el número de pedido real siempre se añade.
+#
+# **Herramientas**: `buscar_productos`, `detalle_producto`, `verificar_atributo`, `comparar_productos`, `consultar_precio_stock`, `buscar_alternativa`, `registrar_restricciones`, `actualizar_carrito`, `ver_carrito`, `vaciar_carrito`, `cotizar`, `confirmar_pedido`.
+
+# %%
+from lab4.llm import LocalLLM
+from lab4.agent import ShoppingAgent
+try:
+    llm = reg.load("llm", lambda: LocalLLM(C.MODELS.llm))
+except Exception as e:                      # p. ej. versión de transformers sin soporte de Qwen3
+    print("Fallo cargando", C.MODELS.llm, "→", e, "\nSe usa", C.MODELS.llm_fallback)
+    llm = reg.load("llm", lambda: LocalLLM(C.MODELS.llm_fallback))
+print(gpu_mem())
+
+# %%
+# Prueba rápida con traza de herramientas
+store.restore("base")
+agent = ShoppingAgent(llm, store, searcher, catalog, session_id="demo", trace=True)
+for u in ["Hola, busco una mochila para portátil, como mucho 40 euros.",
+          "¿La primera es impermeable?"]:
+    r = agent.handle(u)
+    print("👤", u, "\n🤖", r["response"], "\n", r["timing"], "\n")
+    # Control de cordura: en fp16 (la T4 no tiene bf16 nativo) algunos LLM pueden desbordarse y
+    # generar basura; si ocurre, cargue C.MODELS.llm_fallback.
+    assert r["response"].strip() and "!!!!" not in r["response"], "Salida degenerada del LLM"
+print(agent.state.to_prompt(agent.tools._cart_view()[0]))
+
+# %% [markdown]
+# ## 6. Escenarios operativos (22, texto)
+#
+# Cada escenario parte de `restore("base")`, aplica su `setup` determinista (precio/stock por tipo de producto), ejecuta los turnos del usuario y aplica eventos externos (`hooks`) cuando corresponde (p. ej. *otro cliente compra stock entre la cotización y la confirmación*). Se verifica automáticamente el estado final de la tienda, las operaciones y las respuestas, y se cuentan **incumplimientos de restricciones**: presupuesto superado, pedido sin confirmación explícita, pedido duplicado, stock negativo y pedido de un producto agotado.
+
+# %%
+from lab4.scenarios import SCENARIOS, run_scenario
+SCN = {s.id: s for s in SCENARIOS}
+pd.DataFrame([{"id": s.id, "escenario": s.title, "categoría": s.category, "turnos": len(s.turns),
+               "voz": "🎙️" if s.voice else ""} for s in SCENARIOS])
+
+# %%
+text_results = []
+for s in SCENARIOS:
+    print(f"━━━━━━━━ {s.id} · {s.title} ━━━━━━━━")
+    text_results.append(run_scenario(s, llm, store, searcher, catalog))
+json.dump(text_results, open(C.RESULTS_DIR / "escenarios_texto.json", "w"), ensure_ascii=False, indent=1, default=str)
+scn_df, scn_summary = E.scenario_table(text_results)
+display(scn_df); print(json.dumps(scn_summary, indent=2, ensure_ascii=False))
+
+# %% [markdown]
+# ### Ablación a nivel de sistema (mismos escenarios)
+# Se repiten los escenarios **desactivando las reglas deterministas** (`use_rules=False`: memoria de presupuesto y color por reglas, detección de confirmación explícita, cotización y confirmación automáticas, resumen de importes generado por código y autocorrección de acciones no ejecutadas; el LLM decide solo) para medir cuánto aportan al porcentaje de éxito y a los incumplimientos. Así la ablación se hace "utilizando los mismos escenarios", como pide el enunciado, además de la ablación del re-ranker en recuperación.
+
+# %%
+# use_rules=False: sin reglas de memoria (presupuesto/color), sin detección de confirmación explícita
+# (el LLM decide cuándo confirmar), sin cotización/confirmación automáticas ni resumen generado por código.
+abl_cfg = replace(C.AGENT, use_rules=False)
+abl_results = [run_scenario(s, llm, store, searcher, catalog, verbose=False, agent_cfg=abl_cfg) for s in SCENARIOS]
+abl_df, abl_summary = E.scenario_table(abl_results)
+cmp = pd.DataFrame([{"variante": "Sistema completo", **scn_summary}, {"variante": "Sin guardas deterministas", **abl_summary}])
+display(cmp[["variante", "escenarios", "completados_ok", "porcentaje_ok", "incumplimientos_totales", "incumplimientos_por_tipo"]])
+json.dump(abl_results, open(C.RESULTS_DIR / "escenarios_ablacion.json", "w"), ensure_ascii=False, indent=1, default=str)
+
+# %% [markdown]
+# ## 7. Voz: grabación de referencia, ASR y TTS con clonación
+#
+# **Voz propia o autorizada**: un integrante del grupo graba ~20-30 s leyendo el texto de referencia (o sube un `.wav`). Las respuestas sintetizadas son textos **distintos** de la referencia (se comprueba con el solapamiento de trigramas).
+#
+# > Si el micrófono del navegador no funciona, suba el audio a `work/audios/` con los nombres indicados y omita la celda de grabación.
+
+# %%
+from lab4.speech import record, ASR, VoiceTTS, SpeakerSimilarity, load_audio, text_overlap, to_wav16k
+from IPython.display import Audio, display
+
+REFERENCE_TEXT = ("Hola, soy integrante del grupo del laboratorio cuatro de aprendizaje profundo. "
+                  "Esta grabación se usa únicamente como referencia para clonar mi voz con fines académicos. "
+                  "Leo este párrafo con calma, en un lugar silencioso, para que el modelo capture bien "
+                  "el timbre, el ritmo y la entonación de mi forma de hablar.")
+REF_WAV = C.AUDIO_DIR / "referencia.wav"
+print(REFERENCE_TEXT)
+
+# %%
+# Ejecutar solo si aún no existe la grabación de referencia
+if not REF_WAV.exists():
+    REF_WAV, _ = record(REF_WAV, max_seconds=40, label="lea el texto de referencia")
+display(Audio(str(REF_WAV)))
+print(f"Duración: {len(load_audio(REF_WAV))/16000:.1f} s")
+
+# %%
+asr = reg.load("asr", lambda: ASR())
+tts = reg.load("tts", lambda: VoiceTTS(REF_WAV))
+spk = reg.load("speaker_verif", lambda: SpeakerSimilarity())
+pd.DataFrame(reg.load_report)
+
+# %%
+txt, dt = asr.transcribe(REF_WAV)
+print(f"ASR de la referencia ({dt:.2f} s):", txt)
+demo_text = "Te he preparado la cotización: dos botellas por diecisiete con noventa y ocho euros. ¿Confirmas el pedido?"
+assert text_overlap(demo_text, REFERENCE_TEXT) < 0.1
+wav, dt = tts.synthesize(demo_text, C.AUDIO_DIR / "demo_tts.wav")
+print(f"TTS: {dt:.2f} s para {len(wav)/tts.SR:.1f} s de audio (RTF {dt/(len(wav)/tts.SR):.2f})")
+display(Audio(str(C.AUDIO_DIR / "demo_tts.wav")))
+
+# %% [markdown]
+# ## 8. Escenarios por voz
+#
+# Seis escenarios cubren las situaciones pedidas (S03, S01, S02 y S07 tienen varias intervenciones del usuario):
+#
+# | Situación del enunciado | Escenario |
+# |---|---|
+# | Compra que cumple restricciones y termina en pedido | **S01** |
+# | Solicitud ambigua que requiere aclaración | **S02** |
+# | Cambio de cantidad o preferencia conservando restricciones | **S03** |
+# | Producto agotado → alternativa | **S04** |
+# | Corrección de una transcripción antes de comprar | **S06** |
+# | Cambio de stock entre cotización y confirmación + confirmación repetida | **S07** |
+#
+# **Paso 1 — audios de usuario.** Con `USAR_TURNOS_SINTETICOS = True` (valor por defecto) los 20 turnos se generan aquí mismo, en Colab, con una voz de stock de XTTS (*Claribel Dervla*) distinta de la voz clonada; con `False`, cada intervención se graba por micrófono leyendo el texto mostrado. En ambos casos se guardan en Drive (`audios/S0x_t{i}.wav`) y no se regeneran si ya existen. Los turnos sintéticos son el mejor caso para el ASR (audio limpio): se declara como limitación.
+#
+# **Paso 2 — ejecutar** cada escenario con el audio (ASR) y **repetirlo con la transcripción correcta** como entrada, para separar los errores del ASR de los del agente.
+#
+# *Corrección de transcripción (S06)*: antes de ejecutar, la transcripción se muestra y el usuario puede corregirla. Como no se puede forzar un error real del ASR de forma reproducible, el escenario **inyecta un error documentado** ("tres" → "13") y el usuario simulado lo corrige comparando con lo que dijo (revisión de cantidades/importes/productos). Además, el agente siempre lee cantidades y total antes de confirmar, lo que permite corregir por voz.
+
+# %%
+# True: genera en Colab los turnos de usuario con una voz de stock de XTTS (reproducible, sin micrófono).
+# False: graba cada turno por micrófono. Los audios que ya existan en Drive no se regeneran.
+USAR_TURNOS_SINTETICOS = True
+VOZ_USUARIO_SINTETICA = "Claribel Dervla"   # voz de stock de XTTS, distinta de la voz clonada
+
+VOICE = [s for s in SCENARIOS if s.voice]
+def voice_turns(s): return s.voice_turns or s.turns
+def turn_wav(s, i): return C.AUDIO_DIR / f"{s.id}_t{i+1}.wav"
+
+for s in VOICE:
+    for i, t in enumerate(voice_turns(s)):
+        if turn_wav(s, i).exists():
+            continue
+        if USAR_TURNOS_SINTETICOS:
+            # Reutiliza el XTTS ya cargado (tts.api): no se carga un segundo modelo en la GPU.
+            tts.api.tts_to_file(text=t, speaker=VOZ_USUARIO_SINTETICA, language="es", file_path=str(turn_wav(s, i)))
+            print(f"🗣️ {s.id} · turno {i+1} generado: «{t}»")
+        else:
+            print(f"\n{s.id} · turno {i+1}: lea en voz alta →  «{t}»")
+            record(turn_wav(s, i), max_seconds=20, label=f"{s.id} turno {i+1}")
+origen = "sintéticos (XTTS, generados en Colab)" if USAR_TURNOS_SINTETICOS else "grabados por micrófono"
+print("Audios disponibles:", sorted(p.name for p in C.AUDIO_DIR.glob("S0*_t*.wav")), "| turnos nuevos:", origen)
+
+# %%
+import re
+from lab4.pipeline import VoiceAssistant
+from lab4.metrics import entity_errors
+
+def make_voice_turn_fn(s, review=False):
+    def fn(agent, i, gold_text):
+        va = VoiceAssistant(asr, agent, tts)
+        wav = turn_wav(s, i)
+        t_end = time.perf_counter()   # audio pregrabado: el reloj empieza al terminar la carga del audio
+        perturb = s.asr_perturb.get(i)
+        correction, asr_result = None, None
+        if review:
+            # Revisión previa a la ejecución: se transcribe, se muestra y el usuario corrige si
+            # cantidades, importes o productos no coinciden con lo que dijo.
+            raw, asr_s = asr.transcribe(wav)
+            asr_result = (raw, asr_s)
+            hyp = re.sub(perturb[0], perturb[1], raw, flags=re.I) if perturb else raw
+            e = entity_errors(gold_text, hyp, s.product_terms if i == 0 else ())
+            print(f"   📝 Transcripción mostrada al usuario: «{hyp}»")
+            if e["qty_err"] or e["amount_err"] or e["product_err"]:
+                print(f"   ✏️ Corregida por el usuario antes de ejecutar → «{gold_text}»")
+                correction = gold_text
+        r = va.turn(wav, t_end=t_end, correction=correction, perturb=perturb, tag=f"{s.id}_t{i+1}",
+                    asr_result=asr_result)
+        r["gold"] = gold_text
+        return r
+    return fn
+
+voice_results, gold_results = [], []
+for s in VOICE:
+    print(f"━━━━━━━━ VOZ {s.id} · {s.title} ━━━━━━━━")
+    voice_results.append(run_scenario(s, llm, store, searcher, catalog, turns=voice_turns(s),
+                                      turn_fn=make_voice_turn_fn(s, review=(s.id == "S06"))))
+    print(f"━━━━━━━━ TRANSCRIPCIÓN CORRECTA {s.id} ━━━━━━━━")
+    gold_results.append(run_scenario(s, llm, store, searcher, catalog, turns=voice_turns(s), verbose=False))
+json.dump(voice_results, open(C.RESULTS_DIR / "escenarios_voz.json", "w"), ensure_ascii=False, indent=1, default=str)
+json.dump(gold_results, open(C.RESULTS_DIR / "escenarios_voz_gold.json", "w"), ensure_ascii=False, indent=1, default=str)
+
+# %%
+vcmp = pd.DataFrame([{"escenario": v["id"], "título": v["title"], "con ASR": "✅" if v["passed"] else "❌",
+                      "con transcripción correcta": "✅" if g["passed"] else "❌",
+                      "fallos ASR": "; ".join(v["failures"] + v["violations"]),
+                      "pedidos finales": len(v["final_state"]["orders"])}
+                     for v, g in zip(voice_results, gold_results)])
+display(vcmp)
+asr_df, asr_tot = E.asr_error_table(voice_results, SCN)
+display(asr_df[["escenario", "turno", "referencia", "asr", "WER", "qty_err", "amount_err", "product_err", "corregido"]])
+print(json.dumps(asr_tot, indent=2, ensure_ascii=False, default=float))
+
+# %%
+# Registro completo de un escenario por voz: audios, transcripciones, operaciones y estado final
+v = voice_results[-1]
+for t in v["turns"]:
+    print(f"🎙️ {Path(t['audio_in']).name} | ASR: «{t['asr_raw']}» | ejecutado: «{t['executed_text']}»")
+    print("   ops:", [(s['tool'], s['result'].get('error') or 'ok') for s in t["steps"]])
+    print("   🤖", t["response"]); display(Audio(t["audio_out"]))
+print(json.dumps(v["final_state"], indent=1, ensure_ascii=False, default=str)[:2000])
+
+# %% [markdown]
+# ## 9. Calidad de la voz sintetizada
+# * **Inteligibilidad**: WER entre el texto que se quería sintetizar y la transcripción de Whisper del audio sintetizado.
+# * **Semejanza con la voz de referencia**: coseno entre x-vectors WavLM. Se dan dos cotas: la referencia partida en dos mitades (misma persona, cota superior) y una voz distinta (voz de stock de XTTS, cota inferior).
+# * Se verifica que ningún texto sintetizado reutiliza el texto de la referencia (solapamiento de trigramas ≈ 0).
+
+# %%
+other = C.AUDIO_DIR / "otra_voz.wav"
+if not other.exists():
+    tts.api.tts_to_file(text="Buenos días, esta es una voz diferente usada como control.", speaker="Ana Florence",
+                        language="es", file_path=str(other))
+tts_df, tts_bounds = E.tts_quality(asr, spk, tts, REF_WAV, REFERENCE_TEXT, voice_results, other_voice_wav=other)
+display(tts_df.describe().round(3)); print(tts_bounds)
+tts_df.to_csv(C.RESULTS_DIR / "calidad_tts.csv", index=False)
+
+# %% [markdown]
+# ## 10. Latencia
+# Tiempo **desde que termina la grabación hasta que la respuesta puede reproducirse**, desglosado en ASR, LLM, herramientas (RAG + tienda) y TTS. La **carga inicial** de modelos se reporta aparte (tabla del registro de modelos); el primer turno incluye además el calentamiento de CUDA.
+
+# %%
+lat_df = E.latency_breakdown(voice_results)
+display(lat_df.describe().loc[["mean", "50%", "max"]].round(2))
+print("Primer turno (calentamiento) vs resto:",
+      round(lat_df.total_s.iloc[0], 2), "s vs", round(lat_df.total_s.iloc[1:].mean(), 2), "s")
+E.plot_latency(lat_df, C.RESULTS_DIR / "latencia.png")
+load_df = pd.DataFrame(reg.load_report); display(load_df)
+print("Memoria GPU:", gpu_mem())
+
+# %% [markdown]
+# ## 11. Análisis de aciertos, fallos y limitaciones
+#
+# Las celdas siguientes listan automáticamente los aciertos y fallos (recuperación y escenarios). El análisis cualitativo de causas se completa en `README.md` (sección *Análisis de errores*) con los casos concretos de esta ejecución.
+
+# %%
+print("=== Escenarios con fallo (texto) ===")
+for r in text_results:
+    if not r["passed"]:
+        print(f"- {r['id']} {r['title']}: {r['failures'] + r['violations']}")
+        for t in r["turns"]:
+            print(f"    👤 {t['user']}\n    🤖 {t['response'][:200]}\n    ops: {[(s['tool'], s['result'].get('error') or 'ok') for s in t['steps']]}")
+print("\n=== Escenarios correctos ===", [r["id"] for r in text_results if r["passed"]])
+
+# %%
+sections = [
+    ("Versiones y modelos", versions),
+    ("Datos", json.loads((C.DATA_DIR / "summary.json").read_text())),
+    ("Ajuste en desarrollo (fusión)", grid_dev), ("Ajuste en desarrollo (profundidad del re-ranker)", depth_dev),
+    ("Recuperación en test (nDCG@10)", sys_df), ("Significancia frente a BM25", sig_df),
+    ("Aciertos y fallos de recuperación", err_df),
+    ("Escenarios de texto", scn_df), ("Resumen escenarios", scn_summary),
+    ("Ablación de guardas deterministas", cmp[["variante", "porcentaje_ok", "incumplimientos_totales"]]),
+    ("Escenarios por voz vs transcripción correcta", vcmp),
+    ("Errores de ASR", asr_df.drop(columns=["referencia"])), ("Totales ASR", asr_tot),
+    ("Calidad TTS", tts_df.describe().reset_index()), ("Cotas de semejanza", tts_bounds),
+    ("Latencia por etapa (s)", lat_df.describe().reset_index()), ("Carga de modelos", load_df),
+]
+print(E.write_report(SOL_DIR / "RESULTADOS.md", sections))
+
+# %% [markdown]
+# ## 12. Demostración en vivo (para el video)
+# Conversación por turnos con el micrófono: se graba, se muestra la transcripción (puede corregirse escribiendo antes de pulsar Enter), se ejecuta el agente y se reproduce la respuesta con la voz clonada. Se imprime la espera real de cada etapa. Escriba `fin` para terminar.
+
+# %%
+store.restore("base")
+live_agent = ShoppingAgent(llm, store, searcher, catalog, session_id="live", trace=True)
+va = VoiceAssistant(asr, live_agent, tts)
+for k in range(1, 20):
+    wav, t_end = record(C.AUDIO_DIR / f"live_t{k}.wav", max_seconds=25, label=f"turno {k}")
+    hyp, asr_s = asr.transcribe(wav)
+    print(f"📝 Transcripción ({asr_s:.2f} s):", hyp)
+    fix = input("Enter para aceptar, texto para corregir, 'fin' para terminar: ").strip()
+    if fix.lower() == "fin":
+        break
+    # La espera de revisión humana se excluye; la latencia = ASR + agente + TTS
+    r = va.turn(wav, correction=fix or None, tag=f"live_t{k}", play=True, asr_result=(hyp, asr_s))
+    print("🤖", r["response"])
+    print("⏱️", {k2: round(v2, 2) for k2, v2 in r["latency"].items()})
+print(live_agent.state.to_prompt(live_agent.tools._cart_view()[0]))
+print(store.orders("live"))

@@ -1,0 +1,61 @@
+{"etapa": "descarga_esci", "seg": 109.8, "ram_proceso_gb": 0.2, "vram_max_gb": 0.0}
+{"etapa": "preparacion", "seg": 36.6, "ram_proceso_gb": 1.37, "productos": 15000, "vram_max_gb": 0.0}
+{"etapa": "bm25_fit", "seg": 13.3, "ram_proceso_gb": 0.9, "vocab": 50905, "vram_max_gb": 0.0}
+{"etapa": "bm25_fit", "seg": 13.9, "ram_proceso_gb": 0.89, "vocab": 50905, "vram_max_gb": 0.0}
+{"etapa": "embeddings", "seg": 31.4, "ram_proceso_gb": 3.01, "vram_max_gb": 1.8}
+{"etapa": "ajuste_dev", "seg": 37.2, "ram_proceso_gb": 4.05, "vram_max_gb": 1.95}
+{"etapa": "evaluacion_test", "seg": 70.3, "ram_proceso_gb": 4.17, "vram_max_gb": 2.04}
+{"etapa": "bm25_fit", "seg": 19.2, "ram_proceso_gb": 0.88, "vocab": 50905, "vram_max_gb": 0.0}
+{"etapa": "embeddings", "seg": 0.1, "ram_proceso_gb": 2.14, "vram_max_gb": 0.56}
+{"etapa": "turno_agente", "seg": 133.7, "ram_proceso_gb": 10.64, "llm_calls": 2, "vram_max_gb": 10.48}
+{"etapa": "turno_agente", "seg": 17.8, "ram_proceso_gb": 10.82, "llm_calls": 2, "vram_max_gb": 10.48}
+{"etapa": "turno_agente", "seg": 7.4, "ram_proceso_gb": 10.83, "llm_calls": 2, "vram_max_gb": 10.48}
+{"etapa": "turno_agente", "seg": 10.0, "ram_proceso_gb": 10.83, "llm_calls": 2, "vram_max_gb": 10.48}
+{"etapa": "bm25_fit", "seg": 16.7, "ram_proceso_gb": 0.9, "vocab": 50905, "vram_max_gb": 0.0}
+{"etapa": "embeddings", "seg": 0.1, "ram_proceso_gb": 2.15, "vram_max_gb": 0.56}
+{"etapa": "escenario_S01", "seg": 64.6, "ram_proceso_gb": 4.57, "ok": true, "vram_max_gb": 10.15}
+{"etapa": "escenario_S02", "seg": 55.2, "ram_proceso_gb": 4.57, "ok": false, "vram_max_gb": 10.41}
+{"etapa": "escenario_S03", "seg": 73.7, "ram_proceso_gb": 4.57, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S04", "seg": 55.5, "ram_proceso_gb": 4.61, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S05", "seg": 22.8, "ram_proceso_gb": 4.61, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S06", "seg": 36.4, "ram_proceso_gb": 4.61, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S07", "seg": 54.9, "ram_proceso_gb": 4.62, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S08", "seg": 41.8, "ram_proceso_gb": 4.1, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S09", "seg": 26.9, "ram_proceso_gb": 4.1, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S10", "seg": 23.5, "ram_proceso_gb": 4.1, "ok": true, "vram_max_gb": 10.76}
+{"etapa": "escenario_S11", "seg": 21.4, "ram_proceso_gb": 4.1, "ok": true, "vram_max_gb": 10.76}
+{"etapa": "escenario_S12", "seg": 32.0, "ram_proceso_gb": 4.1, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S13", "seg": 12.0, "ram_proceso_gb": 4.11, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S14", "seg": 8.0, "ram_proceso_gb": 4.1, "ok": true, "vram_max_gb": 10.76}
+{"etapa": "escenario_S15", "seg": 32.3, "ram_proceso_gb": 4.1, "ok": true, "vram_max_gb": 10.76}
+{"etapa": "escenario_S16", "seg": 19.6, "ram_proceso_gb": 4.1, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S17", "seg": 22.0, "ram_proceso_gb": 4.11, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S18", "seg": 5.4, "ram_proceso_gb": 4.1, "ok": true, "vram_max_gb": 10.76}
+{"etapa": "escenario_S19", "seg": 3.0, "ram_proceso_gb": 4.1, "ok": true, "vram_max_gb": 10.76}
+{"etapa": "escenario_S20", "seg": 32.4, "ram_proceso_gb": 4.1, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S21", "seg": 11.8, "ram_proceso_gb": 4.1, "ok": false, "vram_max_gb": 10.76}
+{"etapa": "escenario_S22", "seg": 15.0, "ram_proceso_gb": 3.92, "ok": true, "vram_max_gb": 10.76}
+{"etapa": "escenarios_texto", "seg": 670.4, "ram_proceso_gb": 3.92, "vram_max_gb": 10.76}
+{"etapa": "bm25_fit", "seg": 14.8, "ram_proceso_gb": 0.89, "vocab": 50905, "vram_max_gb": 0.0}
+{"etapa": "embeddings", "seg": 0.1, "ram_proceso_gb": 2.15, "vram_max_gb": 0.56}
+{"etapa": "escenario_S02", "seg": 37.3, "ram_proceso_gb": 4.59, "ok": true, "vram_max_gb": 10.61}
+{"etapa": "escenario_S03", "seg": 25.5, "ram_proceso_gb": 4.59, "ok": false, "vram_max_gb": 10.97}
+{"etapa": "escenario_S04", "seg": 28.5, "ram_proceso_gb": 4.63, "ok": false, "vram_max_gb": 10.97}
+{"etapa": "escenario_S05", "seg": 8.1, "ram_proceso_gb": 4.63, "ok": true, "vram_max_gb": 10.97}
+{"etapa": "escenario_S07", "seg": 30.5, "ram_proceso_gb": 4.63, "ok": false, "vram_max_gb": 10.97}
+{"etapa": "escenario_S13", "seg": 13.2, "ram_proceso_gb": 4.63, "ok": false, "vram_max_gb": 10.97}
+{"etapa": "escenario_S21", "seg": 19.8, "ram_proceso_gb": 4.63, "ok": true, "vram_max_gb": 10.97}
+{"etapa": "escenarios_texto", "seg": 163.0, "ram_proceso_gb": 4.63, "vram_max_gb": 10.97}
+{"etapa": "bm25_fit", "seg": 17.0, "ram_proceso_gb": 0.89, "vocab": 50905, "vram_max_gb": 0.0}
+{"etapa": "embeddings", "seg": 0.1, "ram_proceso_gb": 2.15, "vram_max_gb": 0.56}
+{"etapa": "escenario_S03", "seg": 33.0, "ram_proceso_gb": 4.57, "ok": false, "vram_max_gb": 11.3}
+{"etapa": "escenario_S04", "seg": 36.4, "ram_proceso_gb": 4.61, "ok": false, "vram_max_gb": 11.41}
+{"etapa": "escenario_S07", "seg": 33.2, "ram_proceso_gb": 4.61, "ok": true, "vram_max_gb": 11.41}
+{"etapa": "escenario_S13", "seg": 14.8, "ram_proceso_gb": 4.61, "ok": true, "vram_max_gb": 11.41}
+{"etapa": "escenario_S16", "seg": 29.0, "ram_proceso_gb": 4.61, "ok": true, "vram_max_gb": 11.41}
+{"etapa": "escenarios_texto", "seg": 146.5, "ram_proceso_gb": 4.61, "vram_max_gb": 11.41}
+{"etapa": "bm25_fit", "seg": 15.9, "ram_proceso_gb": 0.89, "vocab": 50905, "vram_max_gb": 0.0}
+{"etapa": "embeddings", "seg": 0.1, "ram_proceso_gb": 2.14, "vram_max_gb": 0.56}
+{"etapa": "escenario_S03", "seg": 34.1, "ram_proceso_gb": 4.6, "ok": false, "vram_max_gb": 11.42}
+{"etapa": "escenario_S04", "seg": 41.9, "ram_proceso_gb": 4.64, "ok": false, "vram_max_gb": 12.24}
+{"etapa": "escenarios_texto", "seg": 76.0, "ram_proceso_gb": 4.64, "vram_max_gb": 12.24}

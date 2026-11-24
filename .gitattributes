@@ -1,0 +1,7 @@
+# Los scripts que corren en Linux (Khipu, Colab) deben conservar fin de linea LF
+*.sh text eol=lf
+*.sbatch text eol=lf
+*.py text eol=lf
+*.wav binary
+*.png binary
+*.docx binary

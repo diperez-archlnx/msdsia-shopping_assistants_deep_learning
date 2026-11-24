@@ -1,0 +1,21 @@
+escenario,turno,texto,WER_inteligibilidad,similitud_referencia,solapamiento_trigramas_ref
+S01,1,Tienes tres opciones de botellas de agua reutilizable disponibles dentro de tu p,0.42105263157894735,0.9429981708526611,0.0
+S01,2,"Te resumo la cotización: 2 × HoneyHolly Botella de Agua Acero Inoxidable a 8,99 ",0.7,0.9170804023742676,0.0
+S01,3,Tu pedido ha sido confirmado con éxito. ¡Gracias por tu compra! Si necesitas más,0.39285714285714285,0.9314969778060913,0.0
+S02,1,"¿Qué tipo de cargador necesitas? Por ejemplo, para batería, para móvil, o para c",0.0,0.944287896156311,0.0
+S02,2,He encontrado un cargador USB-C disponible. ¿Quieres añadirlo al carrito?,0.0,0.9097416996955872,0.0
+S02,3,"Te resumo la cotización: 1 × Cable USB Tipo C [3 Pack a 12,99 euros; envío 4,99 ",0.6956521739130435,0.9541659355163574,0.0
+S03,1,"Te resumo la cotización: 3 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 e",0.3333333333333333,0.9426124095916748,0.0
+S03,2,"Te resumo la cotización: 5 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 e",0.48717948717948717,0.9420360326766968,0.0
+S03,3,Tu pedido ha sido confirmado con el número terminado en 8 1 0 7. Has comprado 5 ,0.3,0.9344965815544128,0.0
+S04,1,La primera taza de café encontrada es la J.AKSO - Taza de café de cerámica . ¿Qu,0.043478260869565216,0.903971791267395,0.0
+S04,2,"Te resumo la cotización: 2 × J.AKSO - Taza de café de a 7,99 euros; envío 4,99 e",0.4782608695652174,0.9504652619361877,0.0
+S04,3,La alternativa propuesta es la Danolt Taza de café con leche con tapa y cuchara ,0.2692307692307692,0.9255090355873108,0.0
+S04,4,"Te resumo la cotización: 2 × Danolt Taza de café con leche a 7,99 euros; envío 4",0.4782608695652174,0.9574259519577026,0.0
+S06,1,"Te resumo la cotización: 3 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 e",0.7727272727272727,0.9340122938156128,0.0
+S06,2,Tu pedido está confirmado. ¡Gracias por tu compra! Tu pedido número terminado en,0.18181818181818182,0.9458874464035034,0.0
+S07,1,"Te resumo la cotización: 4 × AmazonBasics - Cable macho de USB a 6,99 euros; env",0.5,0.960628867149353,0.0
+S07,2,El producto AmazonBasics - Cable macho de USB 2.0 no tiene suficiente stock. Sol,0.375,0.9440691471099854,0.0
+S07,3,"Te resumo la cotización: 2 × AmazonBasics - Cable macho de USB a 6,99 euros; env",0.5,0.9362143874168396,0.0
+S07,4,"¡Hecho! Pedido registrado con número terminado en B 0 A 0, por un total de 18,97",0.17647058823529413,0.9031330347061157,0.0
+S07,5,Tu pedido ya está registrado. No es necesario confirmarlo de nuevo. ¿Hay algo má,0.0625,0.9374324083328247,0.0

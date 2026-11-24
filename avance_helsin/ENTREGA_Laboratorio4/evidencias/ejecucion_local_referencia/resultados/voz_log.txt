@@ -1,0 +1,375 @@
+﻿python.exe : W1116 00:09:12.035000 44856 Lib\site-packages\torch\distributed\elastic\multiprocessing\redirects.py:29] 
+NOTE: Redirects are currently not supported in Windows or MacOs.
+En línea: 1 Carácter: 352
++ ... ls\env.ps1; & $PY -X utf8 tests\run_local.py voice *> C:\2026_Maestri ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (W1116 00:09:12....ndows or MacOs.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits 
+and faster downloads.
+⏱ {"etapa": "bm25_fit", "seg": 14.9, "ram_proceso_gb": 0.91, "vocab": 50905, "vram_max_gb": 0.0}
+
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+Loading weights:   3%|▎         | 5/199 [00:00<00:05, 38.72it/s]
+Loading weights:  54%|█████▍    | 107/199 [00:00<00:00, 551.05it/s]
+Loading weights:  94%|█████████▍| 187/199 [00:00<00:00, 649.93it/s]
+Loading weights: 100%|██████████| 199/199 [00:00<00:00, 583.75it/s]
+✔ embedder: 13.2 s, +0.56 GB VRAM
+⏱ {"etapa": "embeddings", "seg": 0.1, "ram_proceso_gb": 2.14, "vram_max_gb": 0.56}
+
+Loading weights:   0%|          | 0/393 [00:00<?, ?it/s]
+Loading weights:   4%|▍         | 15/393 [00:00<00:03, 110.74it/s]
+Loading weights:  12%|█▏        | 49/393 [00:00<00:01, 224.90it/s]
+Loading weights:  23%|██▎       | 91/393 [00:00<00:01, 298.90it/s]
+Loading weights:  34%|███▎      | 132/393 [00:00<00:00, 332.30it/s]
+Loading weights:  45%|████▍     | 175/393 [00:00<00:00, 359.56it/s]
+Loading weights:  57%|█████▋    | 224/393 [00:00<00:00, 388.37it/s]
+Loading weights:  68%|██████▊   | 269/393 [00:00<00:00, 403.57it/s]
+Loading weights:  82%|████████▏ | 321/393 [00:00<00:00, 424.58it/s]
+Loading weights:  95%|█████████▍| 373/393 [00:00<00:00, 438.86it/s]
+Loading weights: 100%|██████████| 393/393 [00:01<00:00, 383.28it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+W1116 00:09:25.025000 44856 Lib\site-packages\torch\utils\flop_counter.py:29] triton not found; flop counting will not 
+work for triton kernels
+✔ reranker: 4.1 s, +1.14 GB VRAM
+
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]
+Loading weights:   0%|          | 1/399 [00:01<08:02,  1.21s/it]
+Loading weights:   1%|          | 2/399 [00:02<07:18,  1.10s/it]
+Loading weights:   1%|          | 4/399 [00:02<03:20,  1.97it/s]
+Loading weights:   2%|▏         | 6/399 [00:02<02:01,  3.22it/s]
+Loading weights:   4%|▍         | 15/399 [00:02<00:35, 10.83it/s]
+Loading weights:   5%|▍         | 18/399 [00:03<00:31, 11.99it/s]
+Loading weights:   7%|▋         | 26/399 [00:03<00:19, 18.70it/s]
+Loading weights:   7%|▋         | 29/399 [00:03<00:20, 18.43it/s]
+Loading weights:   9%|▉         | 37/399 [00:03<00:14, 25.01it/s]
+Loading weights:  10%|█         | 41/399 [00:03<00:14, 24.47it/s]
+Loading weights:  12%|█▏        | 48/399 [00:03<00:12, 28.27it/s]
+Loading weights:  13%|█▎        | 52/399 [00:04<00:13, 26.67it/s]
+Loading weights:  15%|█▍        | 59/399 [00:04<00:11, 28.70it/s]
+Loading weights:  16%|█▌        | 62/399 [00:04<00:14, 23.83it/s]
+Loading weights:  17%|█▋        | 68/399 [00:04<00:11, 30.04it/s]
+Loading weights:  18%|█▊        | 72/399 [00:05<00:14, 21.89it/s]
+Loading weights:  20%|█▉        | 79/399 [00:05<00:10, 29.64it/s]
+Loading weights:  21%|██        | 84/399 [00:05<00:13, 23.26it/s]
+Loading weights:  23%|██▎       | 90/399 [00:05<00:10, 28.77it/s]
+Loading weights:  24%|██▍       | 95/399 [00:05<00:13, 22.54it/s]
+Loading weights:  25%|██▌       | 100/399 [00:06<00:11, 26.53it/s]
+Loading weights:  26%|██▌       | 104/399 [00:06<00:12, 23.09it/s]
+Loading weights:  27%|██▋       | 108/399 [00:06<00:11, 24.91it/s]
+Loading weights:  29%|██▊       | 114/399 [00:06<00:10, 26.35it/s]
+Loading weights:  30%|██▉       | 118/399 [00:06<00:12, 22.25it/s]
+Loading weights:  30%|███       | 121/399 [00:06<00:12, 22.89it/s]
+Loading weights:  31%|███▏      | 125/399 [00:07<00:11, 23.53it/s]
+Loading weights:  32%|███▏      | 128/399 [00:07<00:13, 19.94it/s]
+Loading weights:  34%|███▎      | 134/399 [00:07<00:09, 26.92it/s]
+Loading weights:  35%|███▍      | 138/399 [00:07<00:13, 19.70it/s]
+Loading weights:  36%|███▌      | 144/399 [00:07<00:09, 26.06it/s]
+Loading weights:  37%|███▋      | 148/399 [00:08<00:11, 22.58it/s]
+Loading weights:  38%|███▊      | 151/399 [00:08<00:10, 23.35it/s]
+Loading weights:  39%|███▉      | 156/399 [00:08<00:08, 28.45it/s]
+Loading weights:  40%|████      | 160/399 [00:08<00:11, 20.18it/s]
+Loading weights:  42%|████▏     | 166/399 [00:08<00:08, 26.90it/s]
+Loading weights:  43%|████▎     | 170/399 [00:09<00:10, 21.63it/s]
+Loading weights:  44%|████▎     | 174/399 [00:09<00:09, 23.78it/s]
+Loading weights:  45%|████▌     | 180/399 [00:09<00:08, 25.36it/s]
+Loading weights:  46%|████▌     | 184/399 [00:09<00:09, 22.68it/s]
+Loading weights:  47%|████▋     | 189/399 [00:09<00:07, 27.34it/s]
+Loading weights:  48%|████▊     | 193/399 [00:10<00:11, 18.36it/s]
+Loading weights:  50%|████▉     | 199/399 [00:10<00:08, 24.28it/s]
+Loading weights:  51%|█████     | 203/399 [00:10<00:08, 21.94it/s]
+Loading weights:  52%|█████▏    | 206/399 [00:10<00:08, 22.77it/s]
+Loading weights:  53%|█████▎    | 213/399 [00:10<00:07, 26.18it/s]
+Loading weights:  54%|█████▍    | 217/399 [00:11<00:08, 22.33it/s]
+Loading weights:  56%|█████▌    | 222/399 [00:11<00:06, 26.22it/s]
+Loading weights:  57%|█████▋    | 226/399 [00:11<00:09, 18.14it/s]
+Loading weights:  58%|█████▊    | 232/399 [00:11<00:06, 24.17it/s]
+Loading weights:  59%|█████▉    | 236/399 [00:12<00:08, 19.99it/s]
+Loading weights:  60%|█████▉    | 239/399 [00:12<00:07, 20.05it/s]
+Loading weights:  61%|██████    | 243/399 [00:12<00:06, 22.70it/s]
+Loading weights:  62%|██████▏   | 246/399 [00:12<00:07, 21.82it/s]
+Loading weights:  62%|██████▏   | 249/399 [00:12<00:08, 17.80it/s]
+Loading weights:  64%|██████▎   | 254/399 [00:12<00:06, 23.24it/s]
+Loading weights:  64%|██████▍   | 257/399 [00:12<00:06, 21.83it/s]
+Loading weights:  65%|██████▌   | 260/399 [00:13<00:07, 17.59it/s]
+Loading weights:  66%|██████▋   | 265/399 [00:13<00:05, 23.18it/s]
+Loading weights:  67%|██████▋   | 268/399 [00:13<00:05, 21.92it/s]
+Loading weights:  68%|██████▊   | 271/399 [00:13<00:07, 17.32it/s]
+Loading weights:  69%|██████▉   | 276/399 [00:13<00:05, 22.55it/s]
+Loading weights:  70%|██████▉   | 279/399 [00:14<00:05, 21.30it/s]
+Loading weights:  71%|███████   | 282/399 [00:14<00:07, 15.62it/s]
+Loading weights:  72%|███████▏  | 287/399 [00:14<00:05, 20.19it/s]
+Loading weights:  73%|███████▎  | 290/399 [00:14<00:05, 19.87it/s]
+Loading weights:  73%|███████▎  | 293/399 [00:14<00:06, 16.42it/s]
+Loading weights:  75%|███████▍  | 298/399 [00:15<00:04, 21.89it/s]
+Loading weights:  75%|███████▌  | 301/399 [00:15<00:04, 20.88it/s]
+Loading weights:  76%|███████▌  | 304/399 [00:15<00:05, 17.01it/s]
+Loading weights:  77%|███████▋  | 309/399 [00:15<00:03, 22.53it/s]
+Loading weights:  78%|███████▊  | 312/399 [00:15<00:04, 21.00it/s]
+Loading weights:  79%|███████▉  | 315/399 [00:16<00:04, 16.97it/s]
+Loading weights:  80%|████████  | 321/399 [00:16<00:03, 24.23it/s]
+Loading weights:  81%|████████▏ | 325/399 [00:16<00:04, 15.46it/s]
+Loading weights:  83%|████████▎ | 331/399 [00:16<00:03, 20.82it/s]
+Loading weights:  84%|████████▍ | 335/399 [00:17<00:03, 18.36it/s]
+Loading weights:  85%|████████▍ | 338/399 [00:17<00:03, 19.09it/s]
+Loading weights:  86%|████████▌ | 342/399 [00:17<00:02, 22.53it/s]
+Loading weights:  86%|████████▋ | 345/399 [00:17<00:02, 21.48it/s]
+Loading weights:  87%|████████▋ | 348/399 [00:17<00:02, 17.14it/s]
+Loading weights:  88%|████████▊ | 353/399 [00:17<00:02, 22.17it/s]
+Loading weights:  89%|████████▉ | 356/399 [00:18<00:02, 20.83it/s]
+Loading weights:  90%|████████▉ | 359/399 [00:18<00:02, 16.79it/s]
+Loading weights:  91%|█████████ | 364/399 [00:18<00:01, 21.92it/s]
+Loading weights:  92%|█████████▏| 367/399 [00:18<00:01, 19.94it/s]
+Loading weights:  93%|█████████▎| 370/399 [00:18<00:01, 15.09it/s]
+Loading weights:  94%|█████████▍| 375/399 [00:19<00:01, 20.03it/s]
+Loading weights:  95%|█████████▍| 378/399 [00:19<00:01, 19.45it/s]
+Loading weights:  95%|█████████▌| 381/399 [00:19<00:01, 16.27it/s]
+Loading weights:  97%|█████████▋| 386/399 [00:19<00:00, 21.54it/s]
+Loading weights:  97%|█████████▋| 389/399 [00:19<00:00, 20.51it/s]
+Loading weights:  98%|█████████▊| 392/399 [00:20<00:00, 17.15it/s]
+Loading weights: 100%|██████████| 399/399 [00:20<00:00, 19.81it/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+✔ llm: 23.1 s, +6.09 GB VRAM
+
+Loading weights:   0%|          | 0/587 [00:00<?, ?it/s]
+Loading weights:   6%|▌         | 36/587 [00:00<00:01, 308.78it/s]
+Loading weights:  11%|█▏        | 67/587 [00:00<00:02, 252.45it/s]
+Loading weights:  16%|█▌        | 93/587 [00:00<00:02, 231.74it/s]
+Loading weights:  20%|██        | 119/587 [00:00<00:01, 239.89it/s]
+Loading weights:  25%|██▍       | 144/587 [00:00<00:01, 232.31it/s]
+Loading weights:  31%|███       | 180/587 [00:00<00:01, 263.10it/s]
+Loading weights:  35%|███▌      | 207/587 [00:00<00:01, 262.56it/s]
+Loading weights:  41%|████      | 240/587 [00:00<00:01, 278.58it/s]
+Loading weights:  46%|████▌     | 269/587 [00:01<00:01, 260.67it/s]
+Loading weights:  50%|█████     | 296/587 [00:01<00:01, 260.01it/s]
+Loading weights: 100%|██████████| 587/587 [00:01<00:00, 507.72it/s]
+✔ asr: 2.9 s, +1.62 GB VRAM
+
+Fetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]
+Fetching 9 files: 100%|██████████| 9/9 [00:00<00:00, 1802.54it/s]
+[transformers] Model config: bos_token_id must be `None` or an integer within the vocabulary (between 0 and 255), got 
+50256. This may result in unexpected behavior.
+[transformers] Model config: eos_token_id must be `None` or an integer within the vocabulary (between 0 and 255), got 
+50256. This may result in unexpected behavior.
+[transformers] Model config: bos_token_id must be `None` or an integer within the vocabulary (between 0 and 607), got 
+50256. This may result in unexpected behavior.
+[transformers] Model config: eos_token_id must be `None` or an integer within the vocabulary (between 0 and 607), got 
+50256. This may result in unexpected behavior.
+✔ tts: 11.1 s, +1.88 GB VRAM
+
+Loading weights:   0%|          | 0/266 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 266/266 [00:00<00:00, 31214.08it/s]
+[transformers] Passing `generation_config` together with generation-related arguments=({'begin_suppress_tokens', 
+'suppress_tokens'}) is deprecated and will be removed in future versions. Please pass either a `generation_config` 
+object OR all generation parameters explicitly, but not both.
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer WhisperTokenizer. The 
+clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips 
+spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set 
+clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+✔ speaker_verif: 1.1 s, +0.41 GB VRAM
+━━━━ VOZ S01
+   ⏱ S01 t1: asr_s=16.39, agente_llm_s=6.18, agente_herramientas_s=0.33, agente_total_s=6.56, tts_s=2.11, total_s=25.89 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 14.91, 'total_gb': 25.62}
+👤 Hola, quiero comprar dos botellas de agua reutilizables y tengo un presupuesto de 40 euros.
+🤖 Tienes tres opciones de botellas de agua reutilizable disponibles dentro de tu presupuesto. ¿Te gustaría elegir las primeras dos?
+   ops: ['buscar_productos']
+   ⏱ S01 t2: asr_s=0.15, agente_llm_s=7.03, agente_herramientas_s=0.02, agente_total_s=7.06, tts_s=4.45, total_s=11.68 | GPU {'allocated_gb': 11.7, 'reserved_gb': 11.86, 'max_allocated_gb': 14.91, 'total_gb': 25.62}
+👤 Me quedo con la primera opción. Prepárame la cotización.
+🤖 Te resumo la cotización: 2 × HoneyHolly Botella de Agua Acero Inoxidable a 8,99 euros; envío 4,99 euros. Total: 22,97 euros, dentro de tu presupuesto de 40 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+   ⏱ S01 t3: asr_s=0.11, agente_llm_s=5.28, agente_herramientas_s=0.01, agente_total_s=5.30, tts_s=3.19, total_s=8.61 | GPU {'allocated_gb': 11.7, 'reserved_gb': 11.86, 'max_allocated_gb': 14.91, 'total_gb': 25.62}
+👤 Sí, confirmo el pedido.
+🤖 Tu pedido ha sido confirmado con éxito. ¡Gracias por tu compra! Si necesitas más información, no dudes en preguntar. Número de pedido: P-60AAB998.
+   ops: ['confirmar_pedido']
+✅ OK
+
+━━━━ VOZ S02
+   ⏱ S02 t1: asr_s=0.11, agente_llm_s=5.19, agente_herramientas_s=0.27, agente_total_s=5.47, tts_s=1.59, total_s=7.17 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 14.92, 'total_gb': 25.62}
+👤 Necesito un cargador.
+🤖 ¿Qué tipo de cargador necesitas? Por ejemplo, para batería, para móvil, o para coche.
+   ops: ['buscar_productos']
+   ⏱ S02 t2: asr_s=0.25, agente_llm_s=6.48, agente_herramientas_s=0.30, agente_total_s=6.79, tts_s=1.40, total_s=8.45 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 14.92, 'total_gb': 25.62}
+👤 Es para un móvil con USB-C. Quiero solo uno. Me vale el primero que me muestres. Prepara la cotización.
+🤖 He encontrado un cargador USB-C disponible. ¿Quieres añadirlo al carrito?
+   ops: ['buscar_productos']
+   ⏱ S02 t3: asr_s=0.10, agente_llm_s=6.65, agente_herramientas_s=0.01, agente_total_s=6.67, tts_s=4.23, total_s=11.00 | GPU {'allocated_gb': 11.7, 'reserved_gb': 11.86, 'max_allocated_gb': 14.92, 'total_gb': 25.62}
+👤 Sí, confirmo.
+🤖 Te resumo la cotización: 1 × Cable USB Tipo C [3 Pack a 12,99 euros; envío 4,99 euros. Total: 17,98 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+❌ FALLO: ['se esperaban 1 pedidos y hay 0', "'cargador': cantidad 0 != 1"]
+
+━━━━ VOZ S03
+   ⏱ S03 t1: asr_s=0.23, agente_llm_s=23.69, agente_herramientas_s=0.50, agente_total_s=24.21, tts_s=7.53, total_s=31.98 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Quiero tres cuadernos y dos bolígrafos, con un máximo de 30 euros. Elige los primeros que encuentres.
+🤖 Te resumo la cotización: 3 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; 2 × Waldmann TANGO línea 925 plata esterlina a 1,49 euros; envío 4,99 euros. Total: 16,94 euros, dentro de tu presupuesto de 30 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'buscar_productos', 'actualizar_carrito', 'actualizar_carrito', 'cotizar']
+   ⏱ S03 t2: asr_s=0.18, agente_llm_s=8.86, agente_herramientas_s=0.00, agente_total_s=8.88, tts_s=7.29, total_s=16.36 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Mejor que sean cinco cuadernos en lugar de tres. Prepara la cotización.
+🤖 Te resumo la cotización: 5 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; 2 × Waldmann TANGO línea 925 plata esterlina a 1,49 euros; envío 4,99 euros. Total: 22,92 euros, dentro de tu presupuesto de 30 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+   ⏱ S03 t3: asr_s=0.11, agente_llm_s=8.58, agente_herramientas_s=0.00, agente_total_s=8.59, tts_s=5.85, total_s=14.56 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Sí, confirmo.
+🤖 Tu pedido ha sido confirmado con el número P-3E128107. Has comprado 5 cuadernos Miquelrius a 2,99 euros cada uno y 2 bolígrafos Waldmann a 1,49 euros cada uno. El total es de 22,92 euros, dentro de tu presupuesto de 30 euros. ¡Gracias por tu compra!
+   ops: ['confirmar_pedido']
+✅ OK
+
+━━━━ VOZ S04
+   ⏱ S04 t1: asr_s=0.16, agente_llm_s=5.36, agente_herramientas_s=0.14, agente_total_s=5.50, tts_s=2.37, total_s=8.04 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+[transformers] You seem to be using the pipelines sequentially on GPU. In order to maximize efficiency please use a 
+dataset
+👤 Quiero dos tazas de café. La primera que encuentres está bien.
+🤖 La primera taza de café encontrada es la **J.AKSO - Taza de café de cerámica**. ¿Quieres añadirla al carrito con la cantidad deseada?
+   ops: ['buscar_productos']
+   [evento externo antes del turno 2: {'pinned': {'taza': 92}, 'forbidden': [], 'hook_applied': False}]
+   ⏱ S04 t2: asr_s=0.12, agente_llm_s=7.31, agente_herramientas_s=0.02, agente_total_s=7.34, tts_s=3.91, total_s=11.39 | GPU {'allocated_gb': 11.7, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Prepárame la cotización.
+🤖 Te resumo la cotización: 2 × J.AKSO - Taza de café de a 7,99 euros; envío 4,99 euros. Total: 20,97 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+   ⏱ S04 t3: asr_s=0.20, agente_llm_s=7.02, agente_herramientas_s=0.14, agente_total_s=7.17, tts_s=2.91, total_s=10.30 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Vale. Cámbiala por la alternativa que me propones y vuelve a cotizar.
+🤖 La alternativa propuesta es la **Danolt Taza de café con leche con tapa y cuchara**. ¿Quieres reemplazar la taza actual por esta y volver a cotizar?
+   ops: ['buscar_alternativa']
+   ⏱ S04 t4: asr_s=0.10, agente_llm_s=9.17, agente_herramientas_s=0.02, agente_total_s=9.20, tts_s=4.36, total_s=13.68 | GPU {'allocated_gb': 11.7, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 «Sí», confirmó.
+🤖 Te resumo la cotización: 2 × Danolt Taza de café con leche a 7,99 euros; envío 4,99 euros. Total: 20,97 euros. ¿Confirmas el pedido?
+   ops: ['reemplazar_en_carrito', 'cotizar']
+❌ FALLO: ['precondición no alcanzada: carrito vacío al aplicar el cambio externo', 'se esperaban 1 pedidos y hay 0', "'taza': cantidad 0 != 2"]
+
+━━━━ VOZ S06
+   📝 mostrado: «Quiero 13 cuadernos, el primero que encuentres. Y prepara la cotización.»
+   ✏️ corregido → «Quiero tres cuadernos, el primero que encuentres, y prepara la cotización.»
+   ⏱ S06 t1: asr_s=0.18, agente_llm_s=11.32, agente_herramientas_s=0.14, agente_total_s=11.48, tts_s=4.05, total_s=15.72 | GPU {'allocated_gb': 11.7, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Quiero tres cuadernos, el primero que encuentres, y prepara la cotización.
+🤖 Te resumo la cotización: 3 × Miquelrius - Cuaderno Notebook Messages, 1 a 2,99 euros; envío 4,99 euros. Total: 13,96 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'actualizar_carrito', 'cotizar']
+   📝 mostrado: «Sí, confirmo.»
+   ⏱ S06 t2: asr_s=0.10, agente_llm_s=5.25, agente_herramientas_s=0.01, agente_total_s=5.26, tts_s=2.04, total_s=7.42 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Sí, confirmo.
+🤖 Tu pedido está confirmado. ¡Gracias por tu compra! Tu pedido número P-15639B75 está listo para ser enviado.
+   ops: ['confirmar_pedido']
+✅ OK
+
+━━━━ VOZ S07
+   ⏱ S07 t1: asr_s=0.18, agente_llm_s=8.58, agente_herramientas_s=0.14, agente_total_s=8.75, tts_s=4.30, total_s=13.24 | GPU {'allocated_gb': 11.7, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Quiero cuatro cables USB-C. El primero que encuentres. Prepárame la cotización.
+🤖 Te resumo la cotización: 4 × AmazonBasics - Cable macho de USB a 6,99 euros; envío 4,99 euros. Total: 32,95 euros. ¿Confirmas el pedido?
+   ops: ['buscar_productos', 'actualizar_carrito', 'cotizar']
+   [evento externo antes del turno 2: {'pinned': {'cable': 432}, 'reduced': ['B07D7NNJ61'], 'hook_applied': True}]
+   ⏱ S07 t2: asr_s=0.10, agente_llm_s=5.67, agente_herramientas_s=0.01, agente_total_s=5.69, tts_s=2.75, total_s=8.55 | GPU {'allocated_gb': 11.7, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Sí, confirmó.
+🤖 El producto AmazonBasics - Cable macho de USB 2.0 no tiene suficiente stock. Solo quedan 2 unidades. ¿Quieres buscar una alternativa o reducir la cantidad?
+   ops: ['confirmar_pedido']
+   ⏱ S07 t3: asr_s=0.17, agente_llm_s=7.99, agente_herramientas_s=0.02, agente_total_s=8.01, tts_s=4.05, total_s=12.26 | GPU {'allocated_gb': 11.7, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 De acuerdo. Entonces pon solo dos unidades. Y vuelve a cotizar Ken.
+🤖 Te resumo la cotización: 2 × AmazonBasics - Cable macho de USB a 6,99 euros; envío 4,99 euros. Total: 18,97 euros. ¿Confirmas el pedido?
+   ops: ['actualizar_carrito', 'cotizar']
+   ⏱ S07 t4: asr_s=0.11, agente_llm_s=3.15, agente_herramientas_s=0.00, agente_total_s=3.16, tts_s=2.32, total_s=5.61 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Sí, confirmo.
+🤖 ¡Hecho! Pedido registrado con número P-EF0BB0A0, por un total de 18,97 euros.
+   ops: ['confirmar_pedido']
+   ⏱ S07 t5: asr_s=0.10, agente_llm_s=2.31, agente_herramientas_s=0.00, agente_total_s=2.32, tts_s=1.60, total_s=4.05 | GPU {'allocated_gb': 11.69, 'reserved_gb': 11.86, 'max_allocated_gb': 17.8, 'total_gb': 25.62}
+👤 Sí, confirmo.
+🤖 Tu pedido ya está registrado. No es necesario confirmarlo de nuevo. ¿Hay algo más que necesites?
+   ops: []
+✅ OK
+
+⏱ {"etapa": "escenarios_voz", "seg": 423.6, "ram_proceso_gb": 6.37, "vram_max_gb": 17.8}
+S01 voz: True [] | gold: True
+S02 voz: False ['se esperaban 1 pedidos y hay 0', "'cargador': cantidad 0 != 1"] | gold: False
+S03 voz: True [] | gold: True
+S04 voz: False ['precondición no alcanzada: carrito vacío al aplicar el cambio externo', 'se esperaban 1 pedidos y hay 0', "'taza': cantidad 0 != 2"] | gold: False
+S06 voz: True [] | gold: True
+S07 voz: True [] | gold: True
+   escenario  turno                                                                                                      asr       WER  qty_err  amount_err  product_err
+0        S01      1              Hola, quiero comprar dos botellas de agua reutilizables y tengo un presupuesto de 40 euros.  0.000000        0           0            0
+1        S01      2                                                 Me quedo con la primera opción. Prepárame la cotización.  0.000000        0           0            0
+2        S01      3                                                                                  Sí, confirmo el pedido.  0.000000        0           0            0
+3        S02      1                                                                                    Necesito un cargador.  0.000000        0           0            1
+4        S02      2  Es para un móvil con USB-C. Quiero solo uno. Me vale el primero que me muestres. Prepara la cotización.  0.000000        0           0            0
+5        S02      3                                                                                            Sí, confirmo.  0.000000        0           0            0
+6        S03      1    Quiero tres cuadernos y dos bolígrafos, con un máximo de 30 euros. Elige los primeros que encuentres.  0.000000        0           0            0
+7        S03      2                                  Mejor que sean cinco cuadernos en lugar de tres. Prepara la cotización.  0.000000        0           0            0
+8        S03      3                                                                                            Sí, confirmo.  0.000000        0           0            0
+9        S04      1                                           Quiero dos tazas de café. La primera que encuentres está bien.  0.000000        0           0            0
+10       S04      2                                                                                 Prepárame la cotización.  0.000000        0           0            0
+11       S04      3                                    Vale. Cámbiala por la alternativa que me propones y vuelve a cotizar.  0.000000        0           0            0
+12       S04      4                                                                                          «Sí», confirmó.  0.000000        0           0            0
+13       S06      1                               Quiero tres cuadernos, el primero que encuentres. Y prepara la cotización.  0.000000        0           0            0
+14       S06      2                                                                                            Sí, confirmo.  0.000000        0           0            0
+15       S07      1                          Quiero cuatro cables USB-C. El primero que encuentres. Prepárame la cotización.  0.000000        0           0            0
+16       S07      2                                                                                            Sí, confirmó.  0.000000        0           0            0
+17       S07      3                                      De acuerdo. Entonces pon solo dos unidades. Y vuelve a cotizar Ken.  0.090909        0           0            0
+18       S07      4                                                                                            Sí, confirmo.  0.000000        0           0            0
+19       S07      5                                                                                            Sí, confirmo.  0.000000        0           0            0
+{"WER_medio": 0.004545454545454545, "CER_medio": 0.0034482758620689655, "errores_cantidad": "0/9", "errores_importe": "0/2", "errores_producto": "1/11"}
+        turno  WER_inteligibilidad  similitud_referencia  solapamiento_trigramas_ref
+count  20.000               20.000                20.000                        20.0
+mean    2.300                0.167                 0.984                         0.0
+std     1.174                0.112                 0.004                         0.0
+min     1.000                0.000                 0.974                         0.0
+25%     1.000                0.069                 0.982                         0.0
+50%     2.000                0.193                 0.985                         0.0
+75%     3.000                0.262                 0.987                         0.0
+max     5.000                0.353                 0.992                         0.0
+{'ref_mitad_vs_mitad (cota sup.)': 0.9833776950836182, 'otra_voz_vs_ref (cota inf.)': 0.5550118684768677}
+      turno  asr_s  agente_llm_s  agente_herramientas_s  agente_total_s  tts_s  total_s  agente_otros_s
+mean    2.3   0.96          7.55                   0.10            7.67   3.62    12.30            0.01
+50%     2.0   0.13          6.83                   0.02            6.93   3.55    11.20            0.01
+max     5.0  16.39         23.69                   0.50           24.21   7.53    31.98            0.05
+primer turno vs resto: 25.89 11.58
+[
+ {
+  "modelo": "embedder",
+  "carga_s": 13.2,
+  "vram_gb": 0.56,
+  "allocated_gb": 0.56,
+  "reserved_gb": 0.58,
+  "max_allocated_gb": 0.56,
+  "total_gb": 25.62
+ },
+ {
+  "modelo": "reranker",
+  "carga_s": 4.1,
+  "vram_gb": 1.14,
+  "allocated_gb": 1.7,
+  "reserved_gb": 1.72,
+  "max_allocated_gb": 1.7,
+  "total_gb": 25.62
+ },
+ {
+  "modelo": "llm",
+  "carga_s": 23.1,
+  "vram_gb": 6.09,
+  "allocated_gb": 7.79,
+  "reserved_gb": 7.9,
+  "max_allocated_gb": 7.88,
+  "total_gb": 25.62
+ },
+ {
+  "modelo": "asr",
+  "carga_s": 2.9,
+  "vram_gb": 1.62,
+  "allocated_gb": 9.41,
+  "reserved_gb": 9.55,
+  "max_allocated_gb": 9.41,
+  "total_gb": 25.62
+ },
+ {
+  "modelo": "tts",
+  "carga_s": 11.1,
+  "vram_gb": 1.88,
+  "allocated_gb": 11.29,
+  "reserved_gb": 11.55,
+  "max_allocated_gb": 11.4,
+  "total_gb": 25.62
+ },
+ {
+  "modelo": "speaker_verif",
+  "carga_s": 1.1,
+  "vram_gb": 0.41,
+  "allocated_gb": 11.69,
+  "reserved_gb": 11.86,
+  "max_allocated_gb": 11.69,
+  "total_gb": 25.62
+ }
+]
