@@ -39,13 +39,13 @@ solucion/
 
 ## 2. Cómo ejecutarlo en Colab
 
-1. Subir la carpeta `solucion/` a `MyDrive/Laboratorio4/solucion/`.
+1. Subir la carpeta `solucion/` a `MyDrive/master/deeplearning/laboratorio04/solucion/`.
 2. Abrir `Laboratorio4_Asistente_Voz.ipynb` en Colab y elegir **Entorno de ejecución → Cambiar tipo → GPU T4**.
 3. Ejecutar las celdas en orden. La primera instala `coqui-tts`, `sentence-transformers`, `bitsandbytes`, `accelerate` y `tabulate`. Torch y transformers vienen preinstalados en Colab.
 4. Audios:
    * la **voz de referencia** (unos 30 s leyendo el texto mostrado) se graba por micrófono cuando el notebook la pide, salvo que ya exista `work/audios/referencia.wav`;
    * las **intervenciones de los 6 escenarios de voz** se generan en Colab con una voz de stock de XTTS si `USAR_TURNOS_SINTETICOS = True` (valor por defecto, §8), o se graban por micrófono con `False` (cada frase se muestra en pantalla).
-   Los audios se guardan en `MyDrive/Laboratorio4/work/audios/` y no se vuelven a pedir si ya existen. Sin micrófono, se pueden subir `.wav` con los mismos nombres (`referencia.wav`, `S01_t1.wav`, …).
+   Los audios se guardan en `MyDrive/master/deeplearning/laboratorio04/work/audios/` y no se vuelven a pedir si ya existen. Sin micrófono, se pueden subir `.wav` con los mismos nombres (`referencia.wav`, `S01_t1.wav`, …).
 5. Al terminar se escribe `RESULTADOS.md` con todas las tablas de la ejecución.
 
 | Etapa | Tiempo aproximado en T4 |
@@ -203,24 +203,24 @@ consulta ─► BM25 propio ───────┐
 
 ## 5. Análisis de aciertos, fallos y limitaciones
 
-> Las cifras completas, con las tablas y las latencias, están en **`RESULTADOS.md`**. Se obtuvieron en una ejecución local de referencia con los mismos modelos y la misma semilla, y con audios de usuario sintéticos. Al ejecutar el notebook en Colab con las grabaciones del grupo se regeneran en Drive.
+> Las cifras de esta sección son las de la **ejecución del notebook en Google Colab (GPU Tesla T4)** del 24 de noviembre, con la semilla 2026. Las tablas completas están en **`RESULTADOS.md`**, que el propio notebook regenera en Drive. Los turnos de usuario de los escenarios por voz de esta ejecución son sintéticos (voz de stock de XTTS); la voz de las respuestas es la clonada a partir de la grabación de referencia del grupo.
 
 ### 5.1 Recuperación
-* **Modelo base léxico frente al sistema completo**: nDCG@10 en test pasa de 0,693 a **0,774** en los candidatos anotados y de 0,599 a **0,692** en el catálogo completo. En los dos casos la mejora es significativa (bootstrap pareado, p < 0,001).
+* **Modelo base léxico frente al sistema completo**: nDCG@10 en test pasa de 0,693 a **0,777** en los candidatos anotados y de 0,599 a **0,697** en el catálogo completo. En los dos casos la mejora es significativa (bootstrap pareado, p < 0,001; IC95 de la diferencia [+0,062, +0,106] y [+0,073, +0,123]).
 * **Ablación**:
-  * El **re-ranker** es el componente que más aporta: quitarlo resta 0,048 y 0,068, a cambio de unos 127 ms por consulta.
-  * El RRF solo marca diferencia en el catálogo completo (0,692 frente a 0,672 de BM25 + re-ranker), donde los dos recuperadores encuentran candidatos distintos.
+  * El **re-ranker** es el componente que más aporta: quitarlo (híbrido RRF solo) resta 0,047 en los candidatos (0,730) y 0,086 en el catálogo (0,611).
+  * La fusión RRF solo marca diferencia en el catálogo completo (0,697 frente a 0,679 de BM25 + re-ranker y 0,677 de denso + re-ranker), donde los dos recuperadores encuentran candidatos distintos. En los candidatos anotados las tres variantes con re-ranker empatan (0,777).
   * El denso solo supera a BM25 en los candidatos (0,726 frente a 0,693), no en el catálogo (0,572 frente a 0,599): el modelo e5 confunde productos con el mismo tema y distinta función.
-* **Aciertos**: «view2», «vestidos fiesta», «vestido calvin klein», «urna cenizas», «tv 22 pulgadas». Son consultas cuya marca, modelo o tipo aparece literal en el título.
+* **Aciertos**: «view2», «vestidos fiesta», «vestido calvin klein mujer», «urna cenizas pequeñas», «tv 22 pulgadas». Son consultas cuya marca, modelo o tipo aparece literal en el título.
 * **Fallos**:
   * «carpetas sin anillas» y «aspiradoras dyson sin bolsa»: **negaciones**, el término negado atrae los productos excluidos;
   * «repuesto vaso licuadora oster»: **compatibilidad**, devuelve el aparato y no el repuesto;
-  * «carne»: consulta genérica de una palabra;
+  * «carne»: consulta genérica de una palabra (aparecen picadoras y ablandadores, complementos);
   * «shein ropa niña»: marca de tienda que no aparece en el texto del producto.
 
 ### 5.2 Agente
-* **0 incumplimientos de restricciones en todas las versiones** (v1, v3 y ablación). Las garantías (confirmación explícita, presupuesto, stock, atomicidad e idempotencia) están en las herramientas y el `Store`, así que no dependen del LLM.
-* **Tareas completadas**: v1 resolvía 8/22. Los fallos típicos eran:
+* **0 incumplimientos de restricciones** en el sistema completo y en la ablación. Las garantías (confirmación explícita, presupuesto, stock, atomicidad e idempotencia) están en las herramientas y el `Store`, así que no dependen del LLM. Los tres fallos de abajo lo muestran: el agente no completa la tarea, pero la tienda nunca queda en un estado inválido.
+* **Tareas completadas**: la primera versión del agente (v1, durante el desarrollo) resolvía 8/22. Los fallos típicos eran:
   * pedir confirmación sin cotizar;
   * pedir permiso cuando el usuario ya había elegido;
   * no guardar el color;
@@ -228,28 +228,32 @@ consulta ─► BM25 propio ───────┐
   * ordinales ambiguos entre dos búsquedas;
   * no poder reemplazar un producto del carrito.
 
-  Cada causa se resolvió con un mecanismo (§3.3) y **v3 llega a 19/22 (86 %)**. Sin las reglas deterministas cae a **11/22 (50 %)**: el LLM solo, con las mismas herramientas, completa la mitad.
-* **Fallos que quedan**:
-  * **S02**: el re-ranker pone un *cable* primero para «cargador USB C» (error de recuperación) y el LLM pide permiso en lugar de actuar;
-  * **S04**: en el turno 1 el LLM pregunta «¿quieres que la añada?» (exceso de cautela), así que el producto agotado encuentra el carrito vacío;
-  * **S12**: la preferencia «azul» se guarda en la memoria, pero el LLM no la incluye en la consulta de búsqueda.
-* **Sesgo**: v3 se ajustó viendo estos escenarios, así que el 86 % es optimista. La cifra robusta es la diferencia con la ablación y los 0 incumplimientos.
+  Cada causa se resolvió con un mecanismo (§3.3) y la versión final llega a **19/22 (86,4 %)**. Sin las reglas deterministas (`use_rules=False`, ablación sobre los mismos escenarios) cae a **10/22 (45,5 %)**: el LLM solo, con las mismas herramientas, completa menos de la mitad.
+* **Fallos que quedan** (en esta ejecución):
+  * **S08 (presupuesto excedido y ajuste)**: ante «tres mochilas… las primeras que encuentres», el LLM añade **tres productos distintos con una unidad cada uno** en lugar de tres unidades de uno. Al pedir «entonces solo una» deja una unidad del primero pero no quita los otros dos, así que la cotización sigue en 74,97 € frente a un presupuesto de 30 €. La guarda de presupuesto impide el pedido en todos los turnos (correcto), pero la tarea queda sin completar. Causa: ambigüedad «tres X» → cantidad o número de productos.
+  * **S11 (atributo no verificable)**: a «¿La primera es apta para lavavajillas?» el agente llama a `verificar_atributo`, pero luego **añade el producto al carrito y cotiza** en vez de decir que el dato no consta. Causa: la regla `CHOICE_RE` (añadida para corregir el exceso de cautela de S02 y S04) detecta «la primera» como una elección del usuario y empuja al LLM a actuar. Es un **falso positivo de una regla léxica** introducido por esa corrección.
+  * **S13 (compra directa sin confirmación)**: el LLM responde «Actualizo el carrito con la taza…» pero **no llama a `actualizar_carrito`**. La autocorrección de acciones anunciadas no la detecta porque «actualizo» no está en su lista de verbos. Al confirmar, la tienda rechaza el pedido por falta de cotización (`sin_cotizacion`), como debe.
+* **Escenarios que antes fallaban y ahora pasan**: S02 (petición ambigua) y S04 (producto agotado), gracias a la regla de elección y a aplicar el evento de agotado al primer producto mostrado; S12 (cambio de preferencia de color) también pasa en esta ejecución.
+* **Sesgo**: las reglas se ajustaron viendo estos mismos escenarios, así que el 86 % es optimista; además, corregir S02 y S04 rompió S11. La cifra robusta es la diferencia con la ablación (+41 puntos) y los 0 incumplimientos.
 
 ### 5.3 Voz
-* **ASR**: WER de 0,005 y **0 errores en cantidades, importes y productos** en los 20 turnos. Con audio y con la transcripción correcta se obtiene lo mismo (4/6), y los dos fallos (S02 y S04) son los del agente.
-* **S06** demuestra la corrección previa: el error inyectado «tres» → «13» se corrige y se pide 3.
-* **S07** demuestra que la confirmación es atómica e idempotente a pesar del cambio de stock.
+* **Escenarios por voz: 6/6**, igual con el audio (ASR) que con la transcripción correcta, con un pedido final en cada uno.
+* **ASR**: WER media de 0,038 y **0 errores en cantidades (0/9), importes (0/2) y productos (0/10)** en los 20 turnos. Los dos turnos con errores no cambian el resultado: «quiero solo uno punto con no tanto» en S02 (WER 0,25) y «¿Sí? Confirmo. No.» en S07 t5 (WER 0,50, la confirmación repetida).
+* **S06** demuestra la corrección previa: el error inyectado «tres» → «13» se corrige antes de ejecutar y se piden 3.
+* **S07** demuestra que la confirmación es atómica e idempotente a pesar del cambio de stock: un solo pedido aunque se confirme dos veces.
 * **TTS**:
-  * semejanza de 0,984, igual a la cota superior de 0,983 y muy por encima de la cota inferior (otra voz) de 0,555;
-  * WER de inteligibilidad de 0,17, concentrada en las cifras, las siglas y las marcas.
-* **Latencia** por turno: 12,3 s de media (ASR 0,1 s, LLM 7,6 s, herramientas 0,1 s, TTS 3,6 s). La carga en frío es de unos 56 s y 11,7 GB de VRAM. El **LLM es el cuello de botella**.
+  * semejanza con la referencia de **0,952** de media (mín. 0,932), cerca de la cota superior de 0,986 (dos mitades de la misma grabación) y muy por encima de la cota inferior de 0,663 (otra voz);
+  * WER de inteligibilidad de 0,25, concentrada en las cifras, las siglas («USB C») y los nombres de marca;
+  * solapamiento de trigramas con el texto de la referencia: 0 (las respuestas no reutilizan ese texto).
+* **Latencia** por turno en la T4: **28,6 s de media** (mediana 28,9 s; máx. 66,9 s), repartidos en ASR 0,39 s, LLM 17,0 s, herramientas 0,66 s y TTS 10,5 s. El **LLM es el cuello de botella** (≈ 60 %), seguido del TTS.
+* **Memoria y carga**: con los seis modelos cargados se usan **11,7 GB de los 15,6 GB** de la T4. La carga inicial del LLM tardó 988 s porque incluye la descarga de Qwen3-8B en una sesión nueva de Colab; el resto de modelos carga en 11–53 s.
 
 ### 5.4 Limitaciones
 * Catálogo estático de 15k productos y precios ficticios. No hay atributos estructurados: tallas, compatibilidades y materiales solo se conocen si aparecen en el texto.
 * El nDCG sobre el catálogo completo subestima la calidad real, porque hay productos relevantes no anotados que cuentan como 0.
-* La latencia no es de tiempo real. El LLM en 4 bits domina el tiempo (en una T4, entre 2 y 3 veces más que en la ejecución de referencia).
-* Las reglas de confirmación, presupuesto y color son léxicas: frases como «no hay problema, confirmo» se tratan como no confirmadas (sesgo conservador).
-* La ejecución de referencia usa audios sintéticos y limpios, que son el mejor caso para el ASR. El habla espontánea y el ruido real darán más errores en los números.
+* La latencia no es de tiempo real: unos 29 s por turno en la T4, más del doble que los 12,3 s de la ejecución local de referencia en una RTX 5090 Laptop. El LLM en 4 bits domina el tiempo.
+* Las reglas de confirmación, presupuesto, color y elección son léxicas. Tienen falsos negativos («no hay problema, confirmo» no se toma como confirmación; «actualizo» no se reconoce como acción anunciada, S13) y falsos positivos («la primera» en una pregunta se toma como elección, S11).
+* Los turnos de usuario de esta ejecución son sintéticos y limpios, que son el mejor caso para el ASR. El habla espontánea y el ruido real darán más errores en los números.
 * Un solo hablante de referencia, y una métrica de semejanza automática (no hay una prueba MOS con oyentes).
 * XTTS-v2 tiene licencia CPML (solo uso no comercial), adecuada para el uso académico.
 

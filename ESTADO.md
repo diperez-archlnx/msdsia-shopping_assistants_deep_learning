@@ -1,8 +1,18 @@
 # Estado del proyecto: Laboratorio 4, asistente de compras por voz
 
-Última actualización: 24 de noviembre de 2026, noche. **Entrega: 25 de noviembre** (video y código).
+Última actualización: 25 de noviembre de 2026. **Entrega: 25 de noviembre** (video y código).
 
 Este archivo es el punto de partida al clonar el repositorio en otra máquina: qué hay, qué se hizo, qué está corriendo en Khipu y qué falta.
+
+## 0. Actualización del 25 de noviembre (prevalece sobre lo que sigue)
+
+* **El notebook se ejecutó completo en Google Colab (Tesla T4)** el 24 de noviembre por la noche. El notebook con salidas, `RESULTADOS.md` y todos los artefactos están en Drive: `MyDrive/master/deeplearning/laboratorio04/` (`solucion/` y `work/`). Las rutas del notebook apuntan ahí.
+* Cifras de Colab: nDCG@10 de 0,693 (BM25) a **0,777** (sistema completo); agente **19/22** (ablación sin reglas 10/22); voz **6/6**; 0 incumplimientos; 11,7 GB de VRAM; 28,6 s por turno. Fallan S08, S11 y S13 (causas en `README.md` §5.2).
+* `README.md` §5 y `RESULTADOS.md` ya reflejan la ejecución de Colab. Los resultados de la corrida local anterior quedaron en `evidencias/ejecucion_local_referencia/RESULTADOS_ejecucion_local.md`.
+* **Khipu ya no se usa**: el trabajo de CPU terminó por límite de tiempo y el de GPU (65210) se canceló.
+* **Video**: `video/Laboratorio4_presentacion_video.pptx` (18 diapositivas, guion por persona en las notas del orador; reparto para 4 integrantes). Se regenera con `video/generar_presentacion.py`. La demostración (8 min) se hace en vivo en la sección 12 del notebook.
+* Grabaciones reales de los 20 turnos de usuario: están en Drive (`work/audios_usuario_real/`), no en el repositorio (voz de un integrante; el repo es público). El notebook `solucion/Laboratorio4_Asistente_Voz.ipynb` del repo ya incluye la celda que las usa; esa variante (`..._VOZ_REAL.ipynb` en Drive) aún no se ha ejecutado.
+* **Pendiente**: grabar el video y subir `solucion/` + video al formulario.
 
 ## 1. Qué contiene el repositorio
 

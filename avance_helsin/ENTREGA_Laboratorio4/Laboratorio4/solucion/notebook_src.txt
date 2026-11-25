@@ -45,12 +45,12 @@
 #
 # **Estructura esperada en Google Drive** (subir la carpeta `solucion/` entregada):
 # ```
-# MyDrive/Laboratorio4/solucion/
+# MyDrive/master/deeplearning/laboratorio04/solucion/
 #     Laboratorio4_Asistente_Voz.ipynb   ← este notebook
 #     lab4/                              ← paquete Python (scripts)
 #     README.md
 # ```
-# Los datos, índices, audios y resultados se guardan en `MyDrive/Laboratorio4/work/` para no repetir la preparación ni perder las grabaciones al reiniciar la sesión.
+# Los datos, índices, audios y resultados se guardan en `MyDrive/master/deeplearning/laboratorio04/work/` para no repetir la preparación ni perder las grabaciones al reiniciar la sesión.
 #
 # | Componente | Modelo | Tamaño en GPU | Motivo de la elección |
 # |---|---|---|---|
@@ -77,8 +77,8 @@ from pathlib import Path
 from google.colab import drive
 drive.mount('/content/drive')
 
-SOL_DIR = Path('/content/drive/MyDrive/Laboratorio4/solucion')   # ← ajustar si se usa otra ruta
-WORK_DIR = Path('/content/drive/MyDrive/Laboratorio4/work')
+SOL_DIR = Path('/content/drive/MyDrive/master/deeplearning/laboratorio04/solucion')   # ← ajustar si se usa otra ruta
+WORK_DIR = Path('/content/drive/MyDrive/master/deeplearning/laboratorio04/work')
 os.environ['LAB4_BASE'] = str(WORK_DIR)
 os.environ['COQUI_TOS_AGREED'] = '1'
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
@@ -99,6 +99,33 @@ except Exception as e:
 print(json.dumps(versions, indent=2))
 print("Modelos:", C.MODELS)
 (C.RESULTS_DIR / "versiones.json").write_text(json.dumps({**versions, "modelos": C.MODELS.__dict__}, indent=2))
+
+# %% [markdown]
+# ### Turnos de usuario grabados por un integrante del grupo
+# Las 20 intervenciones de los escenarios por voz se grabaron con voz humana (integrante del grupo) y están en `work/audios_usuario_real/`. Esta celda **respalda** la corrida anterior con turnos sintéticos (audios y resultados) en `work/respaldo_sintetico/` y copia las grabaciones reales a `work/audios/`, donde las lee la sección 8. Es idempotente: si se vuelve a ejecutar no sobrescribe el respaldo.
+
+# %%
+import shutil
+REAL_DIR = C.BASE_DIR / "audios_usuario_real"
+BACKUP_DIR = C.BASE_DIR / "respaldo_sintetico"
+reales = sorted(REAL_DIR.glob("S0*_t*.wav"))
+print("Grabaciones reales encontradas:", len(reales))
+if reales:
+    # 1) Respaldo de la corrida sintética (solo la primera vez)
+    if not BACKUP_DIR.exists():
+        (BACKUP_DIR / "audios").mkdir(parents=True)
+        shutil.copytree(C.RESULTS_DIR, BACKUP_DIR / "results")
+        if (SOL_DIR / "RESULTADOS.md").exists():
+            shutil.copy2(SOL_DIR / "RESULTADOS.md", BACKUP_DIR / "RESULTADOS.md")
+        for f in C.AUDIO_DIR.glob("S0*_t*.wav"):   # turnos sintéticos y sus respuestas
+            shutil.copy2(f, BACKUP_DIR / "audios" / f.name)
+        print("Respaldo de la corrida sintética en", BACKUP_DIR)
+    # 2) Las grabaciones reales reemplazan a los turnos sintéticos
+    for f in reales:
+        shutil.copy2(f, C.AUDIO_DIR / f.name)
+    print("Turnos reales copiados a", C.AUDIO_DIR, ":", [f.name for f in reales])
+else:
+    print("No hay grabaciones reales: la sección 8 usará o generará turnos sintéticos.")
 
 # %% [markdown]
 # ## 1. Preparación de datos
@@ -387,7 +414,7 @@ display(Audio(str(C.AUDIO_DIR / "demo_tts.wav")))
 # %%
 # True: genera en Colab los turnos de usuario con una voz de stock de XTTS (reproducible, sin micrófono).
 # False: graba cada turno por micrófono. Los audios que ya existan en Drive no se regeneran.
-USAR_TURNOS_SINTETICOS = True
+USAR_TURNOS_SINTETICOS = False   # turnos grabados por un integrante (ver celda tras la sección 0)
 VOZ_USUARIO_SINTETICA = "Claribel Dervla"   # voz de stock de XTTS, distinta de la voz clonada
 
 VOICE = [s for s in SCENARIOS if s.voice]
