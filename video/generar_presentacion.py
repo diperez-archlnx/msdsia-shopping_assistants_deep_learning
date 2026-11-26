@@ -555,5 +555,12 @@ notes(s, 4, """(≈30 s) Cerramos con las limitaciones: el catálogo es estátic
 
 Como conclusión: construimos un asistente de compras completo por voz en español que corre íntegramente en Colab. El re-ranker mejora la búsqueda de forma significativa, las reglas deterministas casi duplican la tasa de éxito del agente y, sobre todo, poner las garantías en el código nos dio cero incumplimientos de restricciones. Como siguiente paso, añadiríamos atributos estructurados al catálogo y un LLM más rápido. Gracias.""")
 
+# Guion literal (lo que dice cada persona) en las notas del orador
+sys.path.insert(0, __import__("os").path.dirname(__import__("os").path.abspath(__file__)))
+from notas_guion import NOTES
+assert len(NOTES) == len(prs.slides)
+for i, sl in enumerate(prs.slides, 1):
+    head, body = NOTES[i]
+    sl.notes_slide.notes_text_frame.text = head + "\n\n" + body.strip()
 prs.save(OUT)
 print("ok", OUT, len(prs.slides), "diapositivas")
