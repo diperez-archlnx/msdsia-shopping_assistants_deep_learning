@@ -561,6 +561,14 @@ from notas_guion import NOTES
 assert len(NOTES) == len(prs.slides)
 for i, sl in enumerate(prs.slides, 1):
     head, body = NOTES[i]
-    sl.notes_slide.notes_text_frame.text = head + "\n\n" + body.strip()
+    paras = [x.strip() for x in body.strip().split("\n\n") if x.strip()]
+    tf = sl.notes_slide.notes_text_frame
+    tf.text = ""
+    for j, para in enumerate(paras):
+        p = tf.paragraphs[0] if j == 0 else tf.add_paragraph()
+        if j == 0:   # la cabecera va en la misma línea que el inicio del guion
+            r = p.add_run(); r.text = f"[{head}]  "; r.font.bold = True; r.font.size = Pt(12)
+        r = p.add_run(); r.text = para; r.font.size = Pt(14)
+        p.space_after = Pt(6)
 prs.save(OUT)
 print("ok", OUT, len(prs.slides), "diapositivas")
